@@ -16,9 +16,9 @@ func TestMatch(t *testing.T) {
 		{"f#3", 80, Note{Midi: 54, Name: "f#3"}},
 	}
 	for _, test := range tests {
-		note, err := Match(test.note, test.midiNear)
+		note, err := Parse(test.note, test.midiNear)
 		if test.midiNear == 0 {
-			note, err = Match(test.note)
+			note, err = Parse(test.note)
 		}
 		if err != nil {
 			t.Errorf("unexpected error: %v", err)

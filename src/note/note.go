@@ -38,7 +38,7 @@ func findMaxPrefix(a string, b string) string {
 	return a[:i]
 }
 
-func Match(n string, midiNears ...int) (note Note, err error) {
+func Parse(n string, midiNears ...int) (note Note, err error) {
 	midiNear := 60
 	if len(midiNears) > 0 {
 		midiNear = midiNears[0]
