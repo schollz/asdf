@@ -1,0 +1,3 @@
+
+test:
+	LOGGER=info go test -v -cover ./...
