@@ -15,8 +15,9 @@ func New(name string, values []int) *Param {
 }
 
 func (p *Param) Next() int {
+	value := p.Current()
 	p.Iterator++
-	return p.Current()
+	return value
 }
 
 func (p *Param) Current() int {

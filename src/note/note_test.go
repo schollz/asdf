@@ -29,3 +29,22 @@ func TestMatch(t *testing.T) {
 	}
 
 }
+
+func TestOctave(t *testing.T) {
+	tests := []struct {
+		expectedoctave int
+		n              Note
+	}{
+		{4, Note{Midi: 60, Name: "c4"}},
+		{5, Note{Midi: 72, Name: "c5"}},
+		{1, Note{Midi: 35, Name: "b1"}},
+		{-1, Note{Midi: 35 - 24, Name: "b-1"}},
+		{2, Note{Midi: 47, Name: "b2"}},
+	}
+	for _, test := range tests {
+		octave := test.n.Octave()
+		if octave != test.expectedoctave {
+			t.Errorf("expected %d but got %d", test.expectedoctave, octave)
+		}
+	}
+}

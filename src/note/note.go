@@ -3,6 +3,8 @@ package note
 import (
 	"fmt"
 	"math"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -22,9 +24,6 @@ type Note struct {
 	Midi         int    `json:"midi,omitempty"`
 	Name         string `json:"name,omitempty"`
 	NameOriginal string `json:"name_original,omitempty"`
-	IsRest       bool   `json:"is_rest,omitempty"`
-	IsLegato     bool   `json:"is_legato,omitempty"`
-	Length       int    `json:"length,omitempty"`
 }
 
 func findMaxPrefix(a string, b string) string {
@@ -36,6 +35,17 @@ func findMaxPrefix(a string, b string) string {
 		i++
 	}
 	return a[:i]
+}
+
+func (n Note) Octave() int {
+	// get the number at the end of the string
+	re := regexp.MustCompile(`-?\d+`)
+	match := re.FindString(n.Name)
+	if match == "" {
+		return 4
+	}
+	val, _ := strconv.Atoi(match)
+	return val
 }
 
 func Parse(n string, midiNears ...int) (note Note, err error) {
