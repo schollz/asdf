@@ -18,5 +18,10 @@ func Expand(s string) (result string, err error) {
 		return
 	}
 
+	step.RemoveParam(param.PARAM_ARPEGGIO)
+	stepString := step.String()
+
+	result = stepString
+
 	return
 }

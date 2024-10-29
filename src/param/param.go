@@ -65,7 +65,7 @@ func Parse(s string) (p Param, err error) {
 		"transpose":   []string{"t", "trans"},
 		"velocity":    []string{"v", "vel"},
 		"gate":        []string{"g"},
-		"arpeggio:":   []string{"arp"},
+		"arpeggio":    []string{"arp"},
 		"up":          []string{"u"},
 		"down":        []string{"d"},
 		"updown":      []string{"ud"},
