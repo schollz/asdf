@@ -1,6 +1,7 @@
 package arpeggio
 
 import (
+	"github.com/schollz/asdf/src/param"
 	"github.com/schollz/asdf/src/step"
 
 	log "github.com/schollz/logger"
@@ -12,6 +13,10 @@ func Expand(s string) (result string, err error) {
 		log.Error(err)
 		return
 	}
-	result = step.Text
+	result = step.TextOriginal
+	if !step.HasParam(param.PARAM_ARPEGGIO) {
+		return
+	}
+
 	return
 }

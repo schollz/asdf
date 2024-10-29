@@ -8,6 +8,46 @@ import (
 	log "github.com/schollz/logger"
 )
 
+func TestString(t *testing.T) {
+	log.SetLevel("trace")
+	tests := []struct {
+		line     string
+		expected string
+	}{
+		{"Cmaj.gate50,30.prob30", "Cmaj.gate50,30.probability30"},
+		{".gate50,30.prob30", ".gate50,30.probability30"},
+	}
+	for _, test := range tests {
+		step, err := Parse(test.line)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if step.String() != test.expected {
+			t.Errorf("expected %v but got %v", test.expected, step.String())
+		}
+		log.Debugf("%+v", step)
+	}
+	// remove gate
+	tests = []struct {
+		line     string
+		expected string
+	}{
+		{"Cmaj.gate40.prob30", "Cmaj.probability30"},
+		{".gate56.prob30", ".probability30"},
+	}
+	for _, test := range tests {
+		step, err := Parse(test.line)
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		step.RemoveParam(param.PARAM_GATE)
+		if step.String() != test.expected {
+			t.Errorf("expected %v but got %v", test.expected, step.String())
+		}
+		log.Debugf("%+v", step)
+	}
+
+}
 func TestParse(t *testing.T) {
 	log.SetLevel("trace")
 	tests := []struct {

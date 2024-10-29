@@ -12,15 +12,16 @@ import (
 )
 
 type Step struct {
-	Text      string
-	Notes     []note.Note
-	IsRest    bool
-	IsLegato  bool
-	Params    []param.Param
-	Emitters  []emitter.Emitter
-	TimeStart float64
-	TimeEnd   float64
-	TimeLast  float64
+	TextOriginal string
+	TextNote     string
+	Notes        []note.Note
+	IsRest       bool
+	IsLegato     bool
+	Params       []param.Param
+	Emitters     []emitter.Emitter
+	TimeStart    float64
+	TimeEnd      float64
+	TimeLast     float64
 }
 
 func (s Step) GetParamNext(name string, defaultValue int) int {
@@ -32,6 +33,15 @@ func (s Step) GetParamNext(name string, defaultValue int) int {
 	return defaultValue
 }
 
+func (s Step) HasParam(name string) bool {
+	for _, p := range s.Params {
+		if p.Name == name {
+			return true
+		}
+	}
+	return false
+}
+
 func NewStep(notes []note.Note, timeStart float64, timeEnd float64, emitters []emitter.Emitter) Step {
 	return Step{
 		Notes:     notes,
@@ -39,6 +49,25 @@ func NewStep(notes []note.Note, timeStart float64, timeEnd float64, emitters []e
 		TimeEnd:   timeEnd,
 		Emitters:  emitters,
 	}
+}
+
+func (s *Step) RemoveParam(name string) {
+	for i, p := range s.Params {
+		if p.Name == name {
+			s.Params = append(s.Params[:i], s.Params[i+1:]...)
+			return
+		}
+	}
+}
+
+func (s Step) String() string {
+	v := strings.Builder{}
+	v.WriteString(s.TextNote)
+	for _, p := range s.Params {
+		v.WriteString(".")
+		v.WriteString(p.String())
+	}
+	return v.String()
 }
 
 func (s *Step) Play(timeCurrent float64) {
@@ -84,7 +113,6 @@ func (s *Step) Play(timeCurrent float64) {
 }
 
 func Parse(s string, midiNears ...int) (step Step, err error) {
-	step.Text = s
 	midiNear := 60
 	if len(midiNears) > 0 {
 		midiNear = midiNears[0]
@@ -93,7 +121,9 @@ func Parse(s string, midiNears ...int) (step Step, err error) {
 	fields := strings.Split(s, ".")
 	log.Tracef("[%s] fields: %v", s, fields)
 
+	step.TextOriginal = s
 	if len(fields[0]) > 0 {
+		step.TextNote = fields[0]
 		step.Notes, err = noteorchord.Parse(fields[0], midiNear)
 		if err != nil {
 			log.Error(err)

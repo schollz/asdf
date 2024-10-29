@@ -9,10 +9,21 @@ import (
 	log "github.com/schollz/logger"
 )
 
+const PARAM_PROBABILITY = "probability"
+const PARAM_TRANSPOSE = "transpose"
+const PARAM_VELOCITY = "velocity"
+const PARAM_GATE = "gate"
+const PARAM_ARPEGGIO = "arpeggio"
+const PARAM_UP = "up"
+const PARAM_DOWN = "down"
+const PARAM_UPDOWN = "updown"
+const PARAM_RANDOM = "random"
+
 type Param struct {
-	Name     string
-	Values   []int
-	Iterator int
+	TextOriginal string
+	Name         string
+	Values       []int
+	Iterator     int
 }
 
 func New(name string, values []int) Param {
@@ -21,6 +32,18 @@ func New(name string, values []int) Param {
 		Values:   values,
 		Iterator: 0,
 	}
+}
+
+func (p Param) String() string {
+	sb := strings.Builder{}
+	sb.WriteString(p.Name)
+	for i, v := range p.Values {
+		if i > 0 {
+			sb.WriteString(",")
+		}
+		sb.WriteString(strconv.Itoa(v))
+	}
+	return sb.String()
 }
 
 func (p *Param) Next() int {
@@ -34,6 +57,8 @@ func (p *Param) Current() int {
 }
 
 func Parse(s string) (p Param, err error) {
+	p.TextOriginal = s
+
 	// shorthand values
 	names := map[string][]string{
 		"probability": []string{"p", "prob"},
