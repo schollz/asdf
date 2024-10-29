@@ -11,12 +11,11 @@ f3
 g
 ```
 
-```part2_bass
-(c c) * 4 d
-a - - a
-f
-g
-```
+part2_bass
+: (c c) * 4 d
+: a - - a
+: f
+: g
 
 ```part2_chords
 Cmaj7.arp.up4.down4
