@@ -34,10 +34,10 @@ G
 clock
 ```
 
-```crow.voct1.env2.bpm120
-part1_chords * 4
-part2_chords * 4
-```
+crow.voct1.env2.bpm120
+1. part1_chords * 4
+2. part2_chords * 4
+
 
 ```crow.voct3
 part1_bass * 4
