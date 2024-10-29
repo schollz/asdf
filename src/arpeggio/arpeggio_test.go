@@ -12,7 +12,7 @@ func TestExpand(t *testing.T) {
 		line     string
 		expected string
 	}{
-		{"Cmaj.arpeggio.prob30", "Cmaj.probability30"},
+		{"Cmaj.arpeggio16.prob30", "Cmaj.probability30"},
 	}
 	for _, test := range tests {
 		result, err := Expand(test.line)
