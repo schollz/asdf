@@ -15,6 +15,10 @@ func Parse(midiString string, midiNears ...int) (notes []note.Note, err error) {
 	}
 	_ = midiNear
 
+	if midiString == "-" || midiString == "~" {
+		return
+	}
+
 	// if the first character is capital, then it is a chord
 	if midiString[0] >= 'A' && midiString[0] <= 'Z' {
 		// parse chord
