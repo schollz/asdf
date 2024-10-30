@@ -5,10 +5,10 @@ import (
 	"math/rand"
 	"strings"
 
-	"github.com/schollz/asdf/src/emitter"
 	"github.com/schollz/asdf/src/note"
 	"github.com/schollz/asdf/src/noteorchord"
 	"github.com/schollz/asdf/src/param"
+	"github.com/schollz/asdf/src/player"
 	log "github.com/schollz/logger"
 )
 
@@ -20,7 +20,6 @@ type Step struct {
 	IsRest       bool
 	IsLegato     bool
 	Params       []param.Param
-	Emitters     []emitter.Emitter
 	Beats        float64
 	BPM          float64
 	BeatStart    float64
@@ -28,6 +27,7 @@ type Step struct {
 	TimeStart    float64
 	TimeEnd      float64
 	TimeLast     float64
+	Player       player.Player
 }
 
 func (s Step) GetParamNext(name string, defaultValue int) int {
@@ -54,15 +54,6 @@ func (s *Step) RemoveParam(name string) {
 			s.Params = append(s.Params[:i], s.Params[i+1:]...)
 			return
 		}
-	}
-}
-
-func NewStep(notes []note.Note, timeStart float64, timeEnd float64, emitters []emitter.Emitter) Step {
-	return Step{
-		Notes:     notes,
-		TimeStart: timeStart,
-		TimeEnd:   timeEnd,
-		Emitters:  emitters,
 	}
 }
 
@@ -110,9 +101,7 @@ func (s *Step) Play(timeCurrent float64) {
 			// check if velocity parameter exists
 			velocity := s.GetParamNext("velocity", 64)
 
-			for _, emitter := range s.Emitters {
-				emitter.NoteOn(noteMidi, velocity)
-			}
+			s.Player.NoteOn(noteMidi, velocity)
 		}
 	}
 	for _, note := range s.Notes {
@@ -124,9 +113,7 @@ func (s *Step) Play(timeCurrent float64) {
 		}
 
 		if s.TimeLast < timeEnd && timeCurrent >= timeEnd {
-			for _, emitter := range s.Emitters {
-				emitter.NoteOff(note.Midi)
-			}
+			s.Player.NoteOff(note.Midi)
 		}
 	}
 	s.TimeLast = timeCurrent
