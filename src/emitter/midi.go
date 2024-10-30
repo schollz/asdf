@@ -11,12 +11,14 @@ import (
 )
 
 type Midi struct {
-	Name string
-	Conn drivers.Out
+	Name    string
+	Channel int
+	Conn    drivers.Out
 }
 
-func NewMidi(name string) (m Midi, err error) {
+func NewMidi(name string, channel int) (m Midi, err error) {
 	m.Name = name
+	m.Channel = channel
 
 	outs := midi.GetOutPorts()
 	if len(outs) == 0 {
@@ -25,11 +27,17 @@ func NewMidi(name string) (m Midi, err error) {
 	}
 
 	// find the matching output
+	found := false
 	for _, out := range outs {
 		log.Tracef("found MIDI output: %s", out.String())
 		if strings.Contains(strings.ToLower(out.String()), strings.ToLower(name)) {
 			m.Conn = out
+			found = true
 		}
+	}
+	if !found {
+		err = fmt.Errorf("no MIDI output port found with name %s", name)
+		return
 	}
 
 	if m.Conn == nil {
@@ -42,24 +50,35 @@ func NewMidi(name string) (m Midi, err error) {
 	return
 }
 
-func (m *Midi) NoteOn(note int, velocity int) {
+func (m Midi) NoteOn(note int, velocity int) {
 	if m.Conn == nil {
 		return
 	}
 	// Send Note On message with the specified note and velocity
-	err := m.Conn.Send(midi.NoteOn(0, uint8(note), uint8(velocity)))
+	err := m.Conn.Send(midi.NoteOn(uint8(m.Channel), uint8(note), uint8(velocity)))
 	if err != nil {
 		log.Errorf("Failed to send Note On: %v", err)
 	}
 }
 
-func (m *Midi) NoteOff(note int) {
+func (m Midi) NoteOff(note int) {
 	if m.Conn == nil {
 		return
 	}
 	// Send Note Off message with the specified note
-	err := m.Conn.Send(midi.NoteOff(0, uint8(note)))
+	err := m.Conn.Send(midi.NoteOff(uint8(m.Channel), uint8(note)))
 	if err != nil {
 		log.Errorf("Failed to send Note Off: %v", err)
 	}
+}
+
+func (m Midi) Set(param string, value int) {
+	if m.Conn == nil {
+		return
+	}
+	// Send Control Change message with the specified controller and value
+	// err := m.Conn.Send(midi.ControlChange(0, uint8(value), uint8(value)))
+	// if err != nil {
+	// 	log.Errorf("Failed to send Control Change: %v", err)
+	// }
 }

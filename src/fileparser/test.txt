@@ -1,0 +1,28 @@
+**part1_bass**
+```
+c.vel50.gate50
+a4
+f3
+g
+```
+
+
+**part2_bass**
+```
+(c c) * 4 d
+a - - a
+f
+g
+```
+
+*midi.op1.ch0*
+```
+part1_bass * 2
+part2_bass
+```
+
+
+*midi.op1.ch1*
+```
+part2_bass
+```
