@@ -31,6 +31,7 @@ func TestParse(t *testing.T) {
 	block := `.bpm120
 c4 ~ b3 c4
 - (Em f)*2
+Em7.arp.u4.gate50
 `
 	steps, err := Parse(block)
 	if err != nil {
