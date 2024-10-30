@@ -9,7 +9,7 @@ import (
 
 func TestMidi(t *testing.T) {
 	log.SetLevel("trace")
-	m, err := NewMidi("op-1")
+	m, err := NewMidi("through")
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}

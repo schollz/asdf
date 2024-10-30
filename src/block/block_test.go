@@ -36,7 +36,7 @@ c4 ~ b3 d4
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	if len(steps) != 4 {
-		t.Errorf("expected 4 steps, got %d", len(steps))
+	if len(steps) != 7 {
+		t.Errorf("expected 7 steps, got %d", len(steps))
 	}
 }
