@@ -16,6 +16,7 @@ func TestParse(t *testing.T) {
 		expected   []note.Note
 	}{
 		{"c", 71, []note.Note{{Midi: 72, Name: "c5"}}},
+		{"c4", 0, []note.Note{{Midi: 60, Name: "c4"}}},
 		{"c6", 20, []note.Note{{Midi: 84, Name: "c6"}}},
 		{"c", 62, []note.Note{{Midi: 60, Name: "c4"}}},
 		{"d", 32, []note.Note{{Midi: 26, Name: "d1"}}},

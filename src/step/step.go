@@ -1,6 +1,7 @@
 package step
 
 import (
+	"fmt"
 	"math/rand"
 	"strings"
 
@@ -15,10 +16,15 @@ type Step struct {
 	TextOriginal string
 	TextNote     string
 	Notes        []note.Note
+	IsNote       bool
 	IsRest       bool
 	IsLegato     bool
 	Params       []param.Param
 	Emitters     []emitter.Emitter
+	Beats        float64
+	BPM          float64
+	BeatStart    float64
+	BeatEnd      float64
 	TimeStart    float64
 	TimeEnd      float64
 	TimeLast     float64
@@ -58,6 +64,10 @@ func NewStep(notes []note.Note, timeStart float64, timeEnd float64, emitters []e
 		TimeEnd:   timeEnd,
 		Emitters:  emitters,
 	}
+}
+
+func (s Step) Info() string {
+	return fmt.Sprintf("%s (%.2f-%.2f) %0.1f at %.0fbpm", s.String(), s.BeatStart, s.BeatEnd, s.Beats, s.BPM)
 }
 
 func (s Step) String() string {
@@ -138,7 +148,7 @@ func Parse(s string, midiNears ...int) (step Step, err error) {
 
 		step.IsLegato = fields[0] == "-"
 		step.IsRest = fields[0] == "~"
-
+		step.IsNote = !step.IsLegato && !step.IsRest && len(step.Notes) > 0
 	}
 
 	log.Tracef("[%s] notes: %v", s, step.Notes)

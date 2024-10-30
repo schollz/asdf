@@ -15,6 +15,7 @@ func Parse(midiString string, midiNears ...int) (notes []note.Note, err error) {
 	}
 	_ = midiNear
 
+	midiString = strings.TrimSpace(midiString)
 	if midiString == "-" || midiString == "~" {
 		return
 	}
@@ -45,9 +46,10 @@ func Parse(midiString string, midiNears ...int) (notes []note.Note, err error) {
 	}
 
 	for _, noteString := range noteStrings {
+		noteString = strings.TrimSpace(noteString)
 		n, noteErr := note.Parse(noteString, midiNear)
 		if noteErr != nil {
-			log.Error(noteErr)
+			log.Errorf("error parsing note '%s' (%d): %s", noteString, midiNear, noteErr)
 			err = noteErr
 			return
 		}
