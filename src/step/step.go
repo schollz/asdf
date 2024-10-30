@@ -27,7 +27,6 @@ type Step struct {
 	TimeStart    float64
 	TimeEnd      float64
 	TimeLast     float64
-	Player       player.Player
 }
 
 func (s Step) GetParamNext(name string, defaultValue int) int {
@@ -81,7 +80,7 @@ func (s Step) String() string {
 	return v.String()
 }
 
-func (s *Step) Play(timeCurrent float64) {
+func (s *Step) Play(timeCurrent float64, play *player.Player) {
 	if s.TimeLast < s.TimeStart && timeCurrent >= s.TimeStart {
 		for _, note := range s.Notes {
 
@@ -101,7 +100,7 @@ func (s *Step) Play(timeCurrent float64) {
 			// check if velocity parameter exists
 			velocity := s.GetParamNext("velocity", 64)
 
-			s.Player.NoteOn(noteMidi, velocity)
+			play.NoteOn(noteMidi, velocity)
 		}
 	}
 	for _, note := range s.Notes {
@@ -113,7 +112,7 @@ func (s *Step) Play(timeCurrent float64) {
 		}
 
 		if s.TimeLast < timeEnd && timeCurrent >= timeEnd {
-			s.Player.NoteOff(note.Midi)
+			play.NoteOff(note.Midi)
 		}
 	}
 	s.TimeLast = timeCurrent
