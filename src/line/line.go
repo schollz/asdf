@@ -15,6 +15,22 @@ const RIGHT_GROUP = ")"
 const HOLD_GROUP = "-"
 
 func Parse(line string) (result string, err error) {
+	result, err = parse(line)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	if strings.Contains(result, LEFT_GROUP) || strings.Contains(result, RIGHT_GROUP) {
+		result, err = parse(result)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+	}
+	return
+}
+
+func parse(line string) (result string, err error) {
 	line = multiply.Parse(line, multiply.Parentheses)
 	line = sanitizeLine(line)
 
