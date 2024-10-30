@@ -17,6 +17,7 @@ func TestLine(t *testing.T) {
 		{"(a a a)*2 b c", "a a a a a a b - - - - - c - - - - -"},
 		{"- a*2 b c", "- - a a b - c -"},
 		{"c.p1,2,-5 b*4", "c.p1,2,-5 - - - b b b b"},
+		{"c4 C.arp.u4*2", "c4 - (c4 e4 g4 c5) (c4 e4 g4 c5)"},
 	}
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("line(%s)", test.line), func(t *testing.T) {

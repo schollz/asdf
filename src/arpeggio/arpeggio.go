@@ -16,8 +16,8 @@ func Expand(s string) (result string, err error) {
 		log.Error(err)
 		return
 	}
-	result = stepOriginal.TextOriginal
 	if !stepOriginal.HasParam(param.PARAM_ARPEGGIO) {
+		result = s
 		return
 	}
 	stepOriginal.RemoveParam(param.PARAM_ARPEGGIO)

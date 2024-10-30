@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/schollz/asdf/src/arpeggio"
 	"github.com/schollz/asdf/src/multiply"
 	log "github.com/schollz/logger"
 )
@@ -25,6 +26,15 @@ func Parse(line string) (result string, err error) {
 	}
 	log.Tracef("tokens: %v", tokens)
 
+	for i, token := range tokens {
+		if token != LEFT_GROUP && token != RIGHT_GROUP {
+			tokens[i], err = arpeggio.Expand(token)
+			if err != nil {
+				log.Error(err)
+				return
+			}
+		}
+	}
 	result = tokenExpandToLine(tokens)
 	return
 }
