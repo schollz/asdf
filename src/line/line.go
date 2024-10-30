@@ -153,6 +153,9 @@ func tokenExpandToLine(tokens []string) (expanded string) {
 	for i, token := range tokens {
 		if token != LEFT_GROUP && token != RIGHT_GROUP {
 			repetitions := int(math.Round(tokenValues[i] / minValue))
+			if strings.HasPrefix(token, ".") {
+				repetitions = 1
+			}
 			sb.WriteString(token + " ")
 			for j := 1; j < repetitions; j++ {
 				sb.WriteString(HOLD_GROUP + " ")
@@ -205,6 +208,8 @@ func countEntities(tokens []string) (entities int) {
 			depth++
 		} else if token == RIGHT_GROUP {
 			depth--
+		} else if strings.HasPrefix(token, ".") {
+			// do nothing
 		} else if depth == 0 {
 			entities++
 		}

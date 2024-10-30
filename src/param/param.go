@@ -18,6 +18,8 @@ const PARAM_UP = "up"
 const PARAM_DOWN = "down"
 const PARAM_THUMB = "thumb"
 const PARAM_RANDOM = "random"
+const PARAM_BEATS = "beats"
+const PARAM_BPM = "bpm"
 
 type Param struct {
 	TextOriginal string
@@ -70,6 +72,8 @@ func Parse(s string) (p Param, err error) {
 		"down":        []string{"d"},
 		"thumb":       []string{"t"},
 		"random":      []string{"r"},
+		"beats":       []string{"beats"},
+		"bpm":         []string{"bpm"},
 	}
 	// extract all whole numbers (positive or negative) using regex
 	re := regexp.MustCompile(`-?\d+`)
