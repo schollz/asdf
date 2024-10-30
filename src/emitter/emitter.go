@@ -12,14 +12,14 @@ type Emitter interface {
 
 type Debugger struct{}
 
-func (d *Debugger) NoteOn(note int, velocity int) {
+func (d Debugger) NoteOn(note int, velocity int) {
 	log.Debugf("NoteOn: %d %d", note, velocity)
 }
 
-func (d *Debugger) NoteOff(note int) {
+func (d Debugger) NoteOff(note int) {
 	log.Debugf("NoteOff: %d", note)
 }
 
-func (d *Debugger) Set(param string, value int) {
+func (d Debugger) Set(param string, value int) {
 	log.Debugf("Set: %s %d", param, value)
 }

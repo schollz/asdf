@@ -1,6 +1,6 @@
 **part1_bass**
 ```
-c.vel50.gate50
+c.vel50.gate50.bpm120
 a4
 f3
 g
@@ -9,20 +9,21 @@ g
 
 **part2_bass**
 ```
+.bpm120
 (c c) * 4 d
 a - - a
 f
 g
 ```
 
-*midi.op1.ch0*
+*debug*
 ```
-part1_bass * 2
+part1_bass
+```
+
+*debug*
+```
 part2_bass
 ```
 
 
-*midi.op1.ch1*
-```
-part2_bass
-```

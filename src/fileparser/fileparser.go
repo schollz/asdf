@@ -10,18 +10,13 @@ import (
 	"github.com/schollz/asdf/src/emitter"
 	"github.com/schollz/asdf/src/multiply"
 	"github.com/schollz/asdf/src/player"
+	"github.com/schollz/asdf/src/sprocket"
 	log "github.com/schollz/logger"
 )
 
 type Sequences struct {
-	Blocks  []block.Block
-	Outputs []Output
-}
-
-type Output struct {
-	Name   string
-	Block  block.Block
-	Player player.Player
+	Blocks    []block.Block
+	Sprockets []sprocket.Sprocket
 }
 
 func (s Sequences) GetBlock(name string) (b block.Block, err error) {
@@ -87,7 +82,7 @@ func Parse(filename string) (sequences Sequences, err error) {
 					fmt.Println(outputText)
 
 					// copy first block
-					out := Output{Name: outputName}
+					out := sprocket.Sprocket{Name: outputName}
 					for i, name := range strings.Fields(outputText) {
 						var bl block.Block
 						bl, err = sequences.GetBlock(name)
@@ -117,12 +112,16 @@ func Parse(filename string) (sequences Sequences, err error) {
 								continue
 							}
 							emitters = append(emitters, midiEmitter)
+						} else if dotFields[0] == "debug" {
+							emitters = append(emitters, emitter.Debugger{})
+						} else {
+							log.Error(fmt.Errorf("could not find emitter %s", name))
 						}
 					}
 					out.Player = player.New(emitters)
 
 					// add output to list
-					sequences.Outputs = append(sequences.Outputs, out)
+					sequences.Sprockets = append(sequences.Sprockets, out)
 
 					outputIn = false
 					outputText = ""

@@ -20,7 +20,7 @@ func TestFileparser(t *testing.T) {
 	}
 
 	fmt.Println("outputs")
-	for _, o := range sequences.Outputs {
+	for _, o := range sequences.Sprockets {
 		fmt.Printf("output %s\n", o.Name)
 		for _, s := range o.Block.Steps {
 			fmt.Printf("step %+v\n", s.Info())
