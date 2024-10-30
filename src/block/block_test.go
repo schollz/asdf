@@ -28,16 +28,55 @@ f - - - - - g - - - - - a b c a b c
 
 func TestParse(t *testing.T) {
 	log.SetLevel("trace")
-	block := `.bpm120
+	blockString := `.bpm120
 c4 ~ b3 c4
 - (Em f)*2
-Em7.arp.u4.gate50
+Em7.arp.u4.gate50 ~
 `
-	steps, err := Parse(block)
+	block, err := Parse(blockString)
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	if len(steps) != 7 {
-		t.Errorf("expected 7 steps, got %d", len(steps))
+	if len(block.Steps) != 11 {
+		t.Errorf("expected 11 steps, got %d", len(block.Steps))
+	}
+	if block.TotalTime != 6.0 {
+		t.Errorf("expected 6.0 total time, got %f", block.TotalTime)
+	}
+}
+
+func TestParse2(t *testing.T) {
+	log.SetLevel("trace")
+	blockString := `
+c4.bpm60 ~ b3 c4
+c4.bpm30 ~ b3 c4
+`
+	block, err := Parse(blockString)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if len(block.Steps) != 6 {
+		t.Errorf("expected 6 steps, got %d", len(block.Steps))
+	}
+	if block.TotalTime != 12.0 {
+		t.Errorf("expected 12.0 total time, got %f", block.TotalTime)
+	}
+}
+
+func TestParse3(t *testing.T) {
+	log.SetLevel("trace")
+	blockString := `
+c4.bpm60.beats3 b3 c4
+c4.bpm30 b4 c4
+`
+	block, err := Parse(blockString)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if len(block.Steps) != 6 {
+		t.Errorf("expected 6 steps, got %d", len(block.Steps))
+	}
+	if block.TotalTime != 9.0 {
+		t.Errorf("expected 12.0 total time, got %f", block.TotalTime)
 	}
 }

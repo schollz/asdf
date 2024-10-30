@@ -71,7 +71,7 @@ func (s Step) Info() string {
 	for _, n := range s.Notes {
 		notes = append(notes, fmt.Sprint(n.Midi))
 	}
-	return fmt.Sprintf("%s (%.2f-%.2f) %0.1f at %.0fbpm (%s)", s.String(), s.BeatStart, s.BeatEnd, s.Beats, s.BPM, strings.Join(notes, ","))
+	return fmt.Sprintf("%s (%.2f-%.2f beats) (%.2f-%.2f sec) %0.1f at %.0fbpm (%s)", s.String(), s.BeatStart, s.BeatEnd, s.TimeStart, s.TimeEnd, s.Beats, s.BPM, strings.Join(notes, ","))
 }
 
 func (s Step) String() string {

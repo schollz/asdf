@@ -1,6 +1,7 @@
 package block
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/schollz/asdf/src/line"
@@ -8,7 +9,13 @@ import (
 	log "github.com/schollz/logger"
 )
 
-func Parse(block string) (steps []step.Step, err error) {
+type Block struct {
+	Name      string
+	Steps     []step.Step
+	TotalTime float64
+}
+
+func Parse(block string) (b Block, err error) {
 	// first expand block
 	expanded, err := expand(block)
 	if err != nil {
@@ -16,7 +23,7 @@ func Parse(block string) (steps []step.Step, err error) {
 		return
 	}
 	log.Tracef("expanded block: %s", expanded)
-	steps = make([]step.Step, 0)
+	steps := make([]step.Step, 0)
 	lines := strings.Split(expanded, "\n")
 	bpm := 60.0
 	beatsInLine := 4
@@ -56,9 +63,15 @@ func Parse(block string) (steps []step.Step, err error) {
 		}
 		steps = append(steps, lineSteps...)
 	}
+	totalTime := 0.0
+	totalBeats := 0.0
 	for _, s := range steps {
 		log.Tracef("step: %+v", s.Info())
+		totalTime += s.Beats * 60.0 / s.BPM
+		totalBeats += s.Beats
 	}
+	log.Tracef("totalTime: %2.3f", totalTime)
+	log.Tracef("totalBeats: %2.3f", totalBeats)
 
 	// consolidate steps (removing rests and legatos)
 	stepsConsolidated := []step.Step{}
@@ -85,10 +98,19 @@ func Parse(block string) (steps []step.Step, err error) {
 	}
 
 	steps = stepsConsolidated
+	// calculate time start/stop
+	for i := range steps {
+		steps[i].TimeStart = steps[i].BeatStart * 60.0 / steps[i].BPM
+		steps[i].TimeEnd = steps[i].BeatEnd * 60.0 / steps[i].BPM
+	}
+
 	log.Trace("consolidated steps:")
 	for _, s := range steps {
-		log.Tracef("step: %+v", s.Info())
+		fmt.Printf("step: %+v\n", s.Info())
 	}
+
+	b.Steps = steps
+	b.TotalTime = totalTime
 
 	return
 }
