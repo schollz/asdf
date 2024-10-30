@@ -29,8 +29,8 @@ f - - - - - g - - - - - a b c a b c
 func TestParse(t *testing.T) {
 	log.SetLevel("trace")
 	block := `.bpm120
-c4 ~ b3 d4 
-- (e f)*2
+c4 ~ b3 c4
+- (Em f)*2
 `
 	steps, err := Parse(block)
 	if err != nil {
