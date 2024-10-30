@@ -16,7 +16,7 @@ const PARAM_GATE = "gate"
 const PARAM_ARPEGGIO = "arpeggio"
 const PARAM_UP = "up"
 const PARAM_DOWN = "down"
-const PARAM_UPDOWN = "updown"
+const PARAM_THUMB = "thumb"
 const PARAM_RANDOM = "random"
 
 type Param struct {
@@ -62,13 +62,13 @@ func Parse(s string) (p Param, err error) {
 	// shorthand values
 	names := map[string][]string{
 		"probability": []string{"p", "prob"},
-		"transpose":   []string{"t", "trans"},
+		"transpose":   []string{"trans"},
 		"velocity":    []string{"v", "vel"},
 		"gate":        []string{"g"},
 		"arpeggio":    []string{"arp"},
 		"up":          []string{"u"},
 		"down":        []string{"d"},
-		"updown":      []string{"ud"},
+		"thumb":       []string{"t"},
 		"random":      []string{"r"},
 	}
 	// extract all whole numbers (positive or negative) using regex

@@ -42,15 +42,6 @@ func (s Step) HasParam(name string) bool {
 	return false
 }
 
-func NewStep(notes []note.Note, timeStart float64, timeEnd float64, emitters []emitter.Emitter) Step {
-	return Step{
-		Notes:     notes,
-		TimeStart: timeStart,
-		TimeEnd:   timeEnd,
-		Emitters:  emitters,
-	}
-}
-
 func (s *Step) RemoveParam(name string) {
 	for i, p := range s.Params {
 		if p.Name == name {
@@ -60,9 +51,24 @@ func (s *Step) RemoveParam(name string) {
 	}
 }
 
+func NewStep(notes []note.Note, timeStart float64, timeEnd float64, emitters []emitter.Emitter) Step {
+	return Step{
+		Notes:     notes,
+		TimeStart: timeStart,
+		TimeEnd:   timeEnd,
+		Emitters:  emitters,
+	}
+}
+
 func (s Step) String() string {
 	v := strings.Builder{}
-	v.WriteString(s.TextNote)
+	if s.TextNote == "" {
+		for _, n := range s.Notes {
+			v.WriteString(n.Name)
+		}
+	} else {
+		v.WriteString(s.TextNote)
+	}
 	for _, p := range s.Params {
 		v.WriteString(".")
 		v.WriteString(p.String())

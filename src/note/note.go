@@ -48,6 +48,17 @@ func (n Note) Octave() int {
 	return val
 }
 
+func FromMidi(midi int) (note Note, err error) {
+	for _, m := range NoteDB {
+		if m.MidiValue == midi {
+			note = Note{Midi: m.MidiValue, Name: strings.ToLower(m.NameSharp)}
+			return
+		}
+	}
+	err = fmt.Errorf("could not find midi %d", midi)
+	return
+}
+
 func Parse(n string, midiNears ...int) (note Note, err error) {
 	midiNear := 60
 	if len(midiNears) > 0 {
