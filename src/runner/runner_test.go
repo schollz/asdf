@@ -28,7 +28,7 @@ func TestRun(t *testing.T) {
 	}()
 
 	// Allow the function to run for 5 seconds, then cancel
-	time.Sleep(32 * time.Second)
+	time.Sleep(3 * time.Second)
 	cancel()
 
 	// Wait a moment to ensure the goroutine finishes

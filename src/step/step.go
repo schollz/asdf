@@ -80,8 +80,8 @@ func (s Step) String() string {
 	return v.String()
 }
 
-func (s *Step) Play(timeCurrent float64, play *player.Player) {
-	if s.TimeLast < s.TimeStart && timeCurrent >= s.TimeStart {
+func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) {
+	if timeLast < s.TimeStart && timeCurrent >= s.TimeStart {
 		for _, note := range s.Notes {
 
 			// skip if probability is not met
@@ -110,12 +110,10 @@ func (s *Step) Play(timeCurrent float64, play *player.Player) {
 		if gate < 100 {
 			timeEnd = s.TimeStart + (s.TimeEnd-s.TimeStart)*float64(gate)/100
 		}
-
-		if s.TimeLast < timeEnd && timeCurrent >= timeEnd {
+		if timeLast < timeEnd && timeCurrent >= timeEnd {
 			play.NoteOff(note.Midi)
 		}
 	}
-	s.TimeLast = timeCurrent
 }
 
 func Parse(s string, midiNears ...int) (step Step, err error) {

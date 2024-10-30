@@ -42,6 +42,10 @@ func (s *Sprockets) Run(ctx context.Context) (err error) {
 	for {
 		select {
 		case <-ctx.Done():
+			// reset players
+			for _, sp := range s.Sprockets {
+				sp.Player.Reset()
+			}
 			log.Debugf("sprocket received done signal")
 			return nil
 		case <-ticker.C:
@@ -58,7 +62,7 @@ func (s *Sprockets) Run(ctx context.Context) (err error) {
 
 func (s *Sprockets) update(totalLast, totalTime float64) (err error) {
 	s.mu.Lock()
-	for i, sp := range s.Sprockets {
+	for _, sp := range s.Sprockets {
 		currentTime := totalTime
 		currentTimeLast := totalLast
 		for {
@@ -76,9 +80,7 @@ func (s *Sprockets) update(totalLast, totalTime float64) (err error) {
 			}
 		}
 		for _, step := range sp.Block.Steps {
-			if step.TimeStart > currentTimeLast && step.TimeStart <= currentTime {
-				log.Debugf("%s[%d] playing step: %s", sp.Name, i, step.Info())
-			}
+			step.Play(currentTimeLast, currentTime, &sp.Player)
 		}
 	}
 	s.mu.Unlock()
