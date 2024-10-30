@@ -15,6 +15,16 @@ type Block struct {
 	TotalTime float64
 }
 
+func (b *Block) Add(block Block) (err error) {
+	for i := range block.Steps {
+		block.Steps[i].TimeStart += b.TotalTime
+		block.Steps[i].TimeEnd += b.TotalTime
+	}
+	b.Steps = append(b.Steps, block.Steps...)
+	b.TotalTime += block.TotalTime
+	return
+}
+
 func Parse(block string) (b Block, err error) {
 	// first expand block
 	expanded, err := expand(block)
@@ -27,7 +37,7 @@ func Parse(block string) (b Block, err error) {
 	lines := strings.Split(expanded, "\n")
 	bpm := 60.0
 	beatsInLine := 4
-
+	midiNear := 60
 	for _, l := range lines {
 		l = strings.TrimSpace(l)
 		if l == "" {
@@ -38,10 +48,13 @@ func Parse(block string) (b Block, err error) {
 		entitiesInLine := 0
 		for _, v := range strings.Fields(l) {
 			var s step.Step
-			s, err = step.Parse(v)
+			s, err = step.Parse(v, midiNear)
 			if err != nil {
 				log.Error(err)
 				return
+			}
+			if s.IsNote {
+				midiNear = s.Notes[0].Midi
 			}
 			if s.IsLegato || s.IsRest || s.IsNote {
 				entitiesInLine++

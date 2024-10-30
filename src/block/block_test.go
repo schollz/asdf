@@ -1,6 +1,7 @@
 package block
 
 import (
+	"fmt"
 	"testing"
 
 	log "github.com/schollz/logger"
@@ -78,5 +79,22 @@ c4.bpm30 b4 c4
 	}
 	if block.TotalTime != 9.0 {
 		t.Errorf("expected 12.0 total time, got %f", block.TotalTime)
+	}
+}
+
+func TestMerge(t *testing.T) {
+	log.SetLevel("trace")
+	block1, err := Parse("a3 b c d")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	block2, err := Parse("e f g a")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	block1.Add(block2)
+	fmt.Println("merged block")
+	for _, s := range block1.Steps {
+		fmt.Printf("step: %+v\n", s.Info())
 	}
 }
