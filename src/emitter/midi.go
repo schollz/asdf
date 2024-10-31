@@ -29,8 +29,9 @@ func NewMidi(name string, channel int) (m Midi, err error) {
 	// find the matching output
 	found := false
 	for _, out := range outs {
-		log.Tracef("found MIDI output: %s", out.String())
-		if strings.Contains(strings.ToLower(out.String()), strings.ToLower(name)) {
+		outName := strings.ToLower(out.String())
+		log.Tracef("found MIDI output: '%s'", outName)
+		if strings.Contains(outName, strings.ToLower(name)) {
 			m.Conn = out
 			found = true
 		}
@@ -55,6 +56,8 @@ func (m Midi) NoteOn(note int, velocity int) {
 		return
 	}
 	// Send Note On message with the specified note and velocity
+	log.Tracef("[%s] note_on n=%d,v=%d", m.Name, note, velocity)
+
 	err := m.Conn.Send(midi.NoteOn(uint8(m.Channel), uint8(note), uint8(velocity)))
 	if err != nil {
 		log.Errorf("Failed to send Note On: %v", err)
@@ -66,6 +69,7 @@ func (m Midi) NoteOff(note int) {
 		return
 	}
 	// Send Note Off message with the specified note
+	log.Tracef("[%s] note_ff n=%d", m.Name, note)
 	err := m.Conn.Send(midi.NoteOff(uint8(m.Channel), uint8(note)))
 	if err != nil {
 		log.Errorf("Failed to send Note Off: %v", err)

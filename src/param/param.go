@@ -49,8 +49,8 @@ func (p Param) String() string {
 }
 
 func (p *Param) Next() int {
-	value := p.Current()
 	p.Iterator++
+	value := p.Current()
 	return value
 }
 
@@ -64,13 +64,13 @@ func Parse(s string) (p Param, err error) {
 	// shorthand values
 	names := map[string][]string{
 		"probability": []string{"p", "prob"},
-		"transpose":   []string{"trans"},
+		"transpose":   []string{"trans", "t", "tr"},
 		"velocity":    []string{"v", "vel"},
 		"gate":        []string{"g"},
 		"arpeggio":    []string{"arp"},
 		"up":          []string{"u"},
 		"down":        []string{"d"},
-		"thumb":       []string{"t"},
+		"thumb":       []string{"thumb"},
 		"random":      []string{"r"},
 		"beats":       []string{"beats"},
 		"bpm":         []string{"bpm"},
@@ -90,17 +90,23 @@ func Parse(s string) (p Param, err error) {
 		}
 	}
 
-	// find the name which is prefixing the string
+	// find which name has the longest prefix
+	longestPrefix := 0
+	bestK := ""
 	for k, vs := range names {
 		vs = append(vs, k)
 		for _, v := range vs {
-			if strings.HasPrefix(s, v) {
-				p = New(k, values)
-				return
+			if strings.HasPrefix(s, v) && len(v) > longestPrefix {
+				longestPrefix = len(v)
+				bestK = k
 			}
 		}
 	}
+	if bestK == "" {
+		err = fmt.Errorf("could not parse %s", s)
+		return
+	}
+	p = New(bestK, values)
 
-	err = fmt.Errorf("could not parse %s", s)
 	return
 }

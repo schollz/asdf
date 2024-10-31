@@ -30,6 +30,10 @@ func New(sprockets []Sprocket) Sprockets {
 
 func (s *Sprockets) Update(sprockets []Sprocket) {
 	s.mu.Lock()
+	// reset current players
+	for _, sp := range s.Sprockets {
+		sp.Player.Reset()
+	}
 	s.Sprockets = sprockets
 	s.mu.Unlock()
 }
@@ -79,8 +83,18 @@ func (s *Sprockets) update(totalLast, totalTime float64) (err error) {
 				break
 			}
 		}
-		for _, step := range sp.Block.Steps {
-			step.Play(currentTimeLast, currentTime, &sp.Player)
+		if currentTimeLast > currentTime {
+			for _, step := range sp.Block.Steps {
+				step.Play(currentTimeLast, currentTime+sp.Block.TotalTime, &sp.Player)
+			}
+			for _, step := range sp.Block.Steps {
+				step.Play(currentTimeLast-sp.Block.TotalTime, currentTime, &sp.Player)
+			}
+		} else {
+			for _, step := range sp.Block.Steps {
+				step.Play(currentTimeLast, currentTime, &sp.Player)
+			}
+
 		}
 	}
 	s.mu.Unlock()

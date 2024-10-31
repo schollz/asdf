@@ -82,6 +82,21 @@ c4.bpm30 b4 c4
 	}
 }
 
+func TestParse4(t *testing.T) {
+	log.SetLevel("trace")
+	blockString := `.bpm240.gate10
+c.transpose2,0,2 d e f
+`
+	block, err := Parse(blockString)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	fmt.Println("parsed block")
+	for _, s := range block.Steps {
+		fmt.Printf("step: %+v\n", s.Info())
+	}
+}
+
 func TestMerge(t *testing.T) {
 	log.SetLevel("trace")
 	block1, err := Parse("a3 b c d")

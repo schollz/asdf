@@ -38,6 +38,8 @@ func Parse(block string) (b Block, err error) {
 	bpm := 60.0
 	beatsInLine := 4
 	midiNear := 60
+	gate := 100
+	gateGlobal := false
 	for _, l := range lines {
 		l = strings.TrimSpace(l)
 		if l == "" {
@@ -58,12 +60,26 @@ func Parse(block string) (b Block, err error) {
 			}
 			if s.IsLegato || s.IsRest || s.IsNote {
 				entitiesInLine++
+			} else {
+				if s.HasParam("beats") {
+					beatsInLine = s.GetParamNext("beats", beatsInLine)
+				}
+				if s.HasParam("bpm") {
+					bpm = float64(s.GetParamNext("bpm", int(bpm)))
+				}
+				if s.HasParam("gate") {
+					gate = s.GetParamNext("gate", gate)
+					gateGlobal = true
+				} else {
+					s.SetParm("gate", []int{gate})
+				}
 			}
-			if s.HasParam("beats") {
-				beatsInLine = s.GetParamNext("beats", beatsInLine)
-			}
-			if s.HasParam("bpm") {
-				bpm = float64(s.GetParamNext("bpm", int(bpm)))
+			if gateGlobal {
+				if s.HasParam("gate") {
+					gate = s.GetParamNext("gate", gate)
+				} else {
+					s.SetParm("gate", []int{gate})
+				}
 			}
 			s.BPM = bpm
 			lineSteps = append(lineSteps, s)

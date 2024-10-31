@@ -16,6 +16,7 @@ type Step struct {
 	TextOriginal string
 	TextNote     string
 	Notes        []note.Note
+	MidiLast     []int
 	IsNote       bool
 	IsRest       bool
 	IsLegato     bool
@@ -29,13 +30,36 @@ type Step struct {
 	TimeLast     float64
 }
 
-func (s Step) GetParamNext(name string, defaultValue int) int {
-	for _, p := range s.Params {
+func (s *Step) GetParamNext(name string, defaultValue int) int {
+	for i, p := range s.Params {
 		if p.Name == name {
-			return p.Next()
+			v := s.Params[i].Next()
+			if name == "transpose" {
+				log.Debugf("transpose: %d", v)
+			}
+			return v
 		}
 	}
 	return defaultValue
+}
+
+func (s *Step) GetParamCurrent(name string, defaultValue int) int {
+	for i, p := range s.Params {
+		if p.Name == name {
+			return s.Params[i].Current()
+		}
+	}
+	return defaultValue
+}
+
+func (s *Step) SetParm(name string, values []int) {
+	for i, p := range s.Params {
+		if p.Name == name {
+			s.Params[i].Values = values
+			return
+		}
+	}
+	s.Params = append(s.Params, param.New(name, values))
 }
 
 func (s Step) HasParam(name string) bool {
@@ -81,8 +105,8 @@ func (s Step) String() string {
 }
 
 func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) {
-	if timeLast < s.TimeStart && timeCurrent >= s.TimeStart {
-		for _, note := range s.Notes {
+	if timeLast <= s.TimeStart && timeCurrent >= s.TimeStart {
+		for _, nn := range s.Notes {
 
 			// skip if probability is not met
 			probability := s.GetParamNext("probability", 100)
@@ -91,11 +115,7 @@ func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) 
 			}
 
 			// check if transpose parameter exists
-			transpose := s.GetParamNext("transpose", 0)
-			noteMidi := note.Midi
-			if transpose != 0 {
-				noteMidi += transpose
-			}
+			noteMidi := nn.Midi + s.GetParamNext("transpose", 0)
 
 			// check if velocity parameter exists
 			velocity := s.GetParamNext("velocity", 64)
@@ -103,15 +123,16 @@ func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) 
 			play.NoteOn(noteMidi, velocity)
 		}
 	}
-	for _, note := range s.Notes {
-		// check if note has a gate parameter
-		timeEnd := s.TimeEnd
-		gate := s.GetParamNext("gate", 100)
-		if gate < 100 {
-			timeEnd = s.TimeStart + (s.TimeEnd-s.TimeStart)*float64(gate)/100
-		}
-		if timeLast < timeEnd && timeCurrent >= timeEnd {
-			play.NoteOff(note.Midi)
+	// check if note has a gate parameter
+	timeEnd := s.TimeEnd
+	gate := s.GetParamNext("gate", 100)
+	if gate < 100 {
+		timeEnd = s.TimeStart + (s.TimeEnd-s.TimeStart)*float64(gate)/100
+	}
+	if timeLast < timeEnd && timeCurrent >= timeEnd {
+		transpose := s.GetParamCurrent("transpose", 0)
+		for _, nn := range s.Notes {
+			play.NoteOff(nn.Midi + transpose)
 		}
 	}
 }
