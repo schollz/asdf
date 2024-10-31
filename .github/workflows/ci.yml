@@ -25,6 +25,9 @@ jobs:
         sudo apt update
         sudo apt install -y libasound2-dev
 
+    - name: Run tests
+      run: go test ./...
+
     - name: Build files
       run: |
         GOOS=linux GOARCH=amd64 go build -ldflags '-X "main.Version=${{ github.event.release.name }}"' -o asdf_linux_amd64

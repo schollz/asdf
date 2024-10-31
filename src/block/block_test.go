@@ -68,17 +68,17 @@ func TestParse3(t *testing.T) {
 	log.SetLevel("trace")
 	blockString := `
 c4.bpm60.beats3 b3 c4
-c4.bpm30 b4 c4
+c4.bpm30.beats4 b4 c4 d3
 `
 	block, err := Parse(blockString)
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	if len(block.Steps) != 6 {
-		t.Errorf("expected 6 steps, got %d", len(block.Steps))
+	if len(block.Steps) != 7 {
+		t.Errorf("expected 7 steps, got %d", len(block.Steps))
 	}
-	if block.TotalTime != 9.0 {
-		t.Errorf("expected 12.0 total time, got %f", block.TotalTime)
+	if block.TotalTime != 11.0 {
+		t.Errorf("expected 11 total time, got %f", block.TotalTime)
 	}
 }
 

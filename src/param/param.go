@@ -32,7 +32,7 @@ func New(name string, values []int) Param {
 	return Param{
 		Name:     name,
 		Values:   values,
-		Iterator: 0,
+		Iterator: -1,
 	}
 }
 

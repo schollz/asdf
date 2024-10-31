@@ -35,11 +35,12 @@ func Parse(block string) (b Block, err error) {
 	log.Tracef("expanded block: %s", expanded)
 	steps := make([]step.Step, 0)
 	lines := strings.Split(expanded, "\n")
-	bpm := 60.0
-	beatsInLine := 4
 	midiNear := 60
-	gate := 100
-	gateGlobal := false
+	globalVars := make(map[string]int)
+	globalVars["bpm"] = 60
+	globalVars["beats"] = 4
+	// STICKY parameters
+	globalVariables := []string{"beats", "bpm", "gate", "velocity"}
 	for _, l := range lines {
 		l = strings.TrimSpace(l)
 		if l == "" {
@@ -60,34 +61,24 @@ func Parse(block string) (b Block, err error) {
 			}
 			if s.IsLegato || s.IsRest || s.IsNote {
 				entitiesInLine++
-			} else {
-				if s.HasParam("beats") {
-					beatsInLine = s.GetParamNext("beats", beatsInLine)
-				}
-				if s.HasParam("bpm") {
-					bpm = float64(s.GetParamNext("bpm", int(bpm)))
-				}
-				if s.HasParam("gate") {
-					gate = s.GetParamNext("gate", gate)
-					gateGlobal = true
-				} else {
-					s.SetParm("gate", []int{gate})
+			}
+			for _, k := range globalVariables {
+				if s.HasParam(k) {
+					globalVars[k] = s.GetParamNext(k, globalVars[k])
 				}
 			}
-			if gateGlobal {
-				if s.HasParam("gate") {
-					gate = s.GetParamNext("gate", gate)
-				} else {
-					s.SetParm("gate", []int{gate})
+			for k, v := range globalVars {
+				if !s.HasParam(k) {
+					s.SetParm(k, []int{v})
 				}
 			}
-			s.BPM = bpm
+			s.BPM = float64(globalVars["bpm"])
 			lineSteps = append(lineSteps, s)
 		}
-		log.Tracef("line %s has %d entitiesInLine with %d beats", l, entitiesInLine, beatsInLine)
+		log.Tracef("line %s has %d entitiesInLine with %d beats", l, entitiesInLine, globalVars["beats"])
 		if entitiesInLine > 0 {
 			for i := range lineSteps {
-				lineSteps[i].Beats = float64(beatsInLine) / float64(entitiesInLine)
+				lineSteps[i].Beats = float64(globalVars["beats"]) / float64(entitiesInLine)
 			}
 		}
 		steps = append(steps, lineSteps...)
