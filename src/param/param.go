@@ -58,6 +58,20 @@ func (p *Param) Current() int {
 	return p.Values[p.Iterator%len(p.Values)]
 }
 
+func (p *Param) Rotate() {
+	p.Values = append(p.Values[1:], p.Values[0])
+}
+
+func (p Param) Copy() Param {
+	values := make([]int, len(p.Values))
+	copy(values, p.Values)
+	return Param{
+		Name:     p.Name,
+		Values:   values,
+		Iterator: p.Iterator,
+	}
+}
+
 func Parse(s string) (p Param, err error) {
 	p.TextOriginal = s
 

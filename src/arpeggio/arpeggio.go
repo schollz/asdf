@@ -61,15 +61,20 @@ func Expand(s string) (result string, err error) {
 			}
 		} else {
 			paramsNew = append(paramsNew, p)
-
 		}
 	}
 
 	newSteps := make([]step.Step, len(notes))
 	for i, v := range notes {
 		newSteps[i] = step.Step{
-			Notes:  []note.Note{v},
-			Params: paramsNew,
+			Notes: []note.Note{v},
+		}
+		newSteps[i].Params = make([]param.Param, len(paramsNew))
+		for j, p := range paramsNew {
+			newSteps[i].Params[j] = p.Copy()
+		}
+		for j := range paramsNew {
+			paramsNew[j].Rotate()
 		}
 	}
 
