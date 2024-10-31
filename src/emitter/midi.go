@@ -16,6 +16,23 @@ type Midi struct {
 	Conn    drivers.Out
 }
 
+func ListMidiOuts() (outs []string, err error) {
+	outPorts := midi.GetOutPorts()
+	if len(outs) == 0 {
+		err = fmt.Errorf("no MIDI output ports available")
+		return
+	}
+
+	// find the matching output
+	for _, out := range outPorts {
+		outName := strings.ToLower(out.String())
+		outName = strings.ReplaceAll(outName, "-", "")
+		outs = append(outs, outName)
+	}
+
+	return
+}
+
 func NewMidi(name string, channel int) (m Midi, err error) {
 	m.Name = name
 	m.Channel = channel
