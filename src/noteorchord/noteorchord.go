@@ -5,10 +5,12 @@ import (
 
 	"github.com/schollz/asdf/src/chord"
 	"github.com/schollz/asdf/src/note"
-	log "github.com/schollz/logger"
 )
 
 func Parse(midiString string, midiNears ...int) (notes []note.Note, err error) {
+	if len(midiString) == 0 {
+		return
+	}
 	midiNear := 60
 	if len(midiNears) > 0 {
 		midiNear = midiNears[0]
@@ -49,7 +51,6 @@ func Parse(midiString string, midiNears ...int) (notes []note.Note, err error) {
 		noteString = strings.TrimSpace(noteString)
 		n, noteErr := note.Parse(noteString, midiNear)
 		if noteErr != nil {
-			log.Errorf("error parsing note '%s' (%d): %s", noteString, midiNear, noteErr)
 			err = noteErr
 			return
 		}

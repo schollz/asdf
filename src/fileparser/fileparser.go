@@ -8,7 +8,9 @@ import (
 
 	"github.com/schollz/asdf/src/block"
 	"github.com/schollz/asdf/src/emitter"
+	"github.com/schollz/asdf/src/jsparse"
 	"github.com/schollz/asdf/src/multiply"
+	"github.com/schollz/asdf/src/noteorchord"
 	"github.com/schollz/asdf/src/player"
 	"github.com/schollz/asdf/src/sprocket"
 	log "github.com/schollz/logger"
@@ -27,6 +29,35 @@ func (s Sequences) GetBlock(name string) (b block.Block, err error) {
 		}
 	}
 	err = fmt.Errorf("could not find block %s", name)
+	return
+}
+
+func ParseJS(filename string) (sequences Sequences, err error) {
+	b, err := os.ReadFile(filename)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	variables, values, err := jsparse.Parse(string(b))
+	if err != nil {
+		log.Error(err)
+	}
+	for i, v := range variables {
+		fmt.Println("\n\n", i, v, values[i])
+		// check if block or if output
+		lines := strings.Split(values[i], "\n")
+		// try to parse first element
+		el := strings.Fields(strings.Replace(lines[0], "(", "", -1))[0]
+		_, err = noteorchord.Parse(strings.Split(el, ".")[0])
+		if err == nil || strings.HasPrefix(el, ".") {
+			// is block
+			fmt.Println("block")
+		} else {
+			// is output
+			fmt.Println("output")
+		}
+	}
+
 	return
 }
 
