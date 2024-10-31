@@ -30,6 +30,7 @@ func NewMidi(name string, channel int) (m Midi, err error) {
 	found := false
 	for _, out := range outs {
 		outName := strings.ToLower(out.String())
+		outName = strings.ReplaceAll(outName, "-", "")
 		log.Tracef("found MIDI output: '%s'", outName)
 		if strings.Contains(outName, strings.ToLower(name)) {
 			m.Conn = out

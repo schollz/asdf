@@ -1,21 +1,16 @@
-**part1**
-```
+part1 = `
 .bpm120.gate10.beats1
 c.tr2,0,2,-2,12 d.tr2,-4 e.tr0,0,1 f
 c.tr4,12,-12,2,0,2,-2,12 d.tr2,-4,8 e.tr0,0,1 f.tr5,-1,12,-12
-```
+`
 
-**part2**
-```
+part2 = `
 .bpm120.gate90
 Cmaj;3.arp.u12,4,8.d8
 Em/B;3.arp.u6,9,12.d8.u12.d4
 Am/E;3.arp.u4.d6.u9.d5
 F;3.arp.u6.d2.t1.u8.d4
-```
+`
 
-
-*midi.op-1*
-```
-part1
-```
+// midi_op1 = "part1"
+debug = "part1"

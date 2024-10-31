@@ -32,7 +32,7 @@ func (s Sequences) GetBlock(name string) (b block.Block, err error) {
 	return
 }
 
-func ParseJS(filename string) (sequences Sequences, err error) {
+func Parse(filename string) (sequences Sequences, err error) {
 	b, err := os.ReadFile(filename)
 	if err != nil {
 		log.Error(err)
@@ -48,121 +48,69 @@ func ParseJS(filename string) (sequences Sequences, err error) {
 		lines := strings.Split(values[i], "\n")
 		// try to parse first element
 		el := strings.Fields(strings.Replace(lines[0], "(", "", -1))[0]
-		_, err = noteorchord.Parse(strings.Split(el, ".")[0])
-		if err == nil || strings.HasPrefix(el, ".") {
+		_, errNote := noteorchord.Parse(strings.Split(el, ".")[0])
+		if errNote == nil || strings.HasPrefix(el, ".") {
 			// is block
-			fmt.Println("block")
+			var currentBlock block.Block
+			currentBlock, err = block.Parse(values[i])
+			if err != nil {
+				log.Error(err)
+				return
+			}
+			currentBlock.Name = v
+			sequences.Blocks = append(sequences.Blocks, currentBlock)
 		} else {
 			// is output
 			fmt.Println("output")
-		}
-	}
+			outputText := strings.Join(strings.Split(values[i], "\n"), " ")
+			outputText = multiply.Parse(outputText, multiply.Parentheses)
+			// remove all parentheses
+			outputText = strings.ReplaceAll(outputText, "(", "")
+			outputText = strings.ReplaceAll(outputText, ")", "")
+			fmt.Println(outputText)
 
-	return
-}
-
-func Parse(filename string) (sequences Sequences, err error) {
-	b, err := os.ReadFile(filename)
-	if err != nil {
-		log.Error(err)
-		return
-	}
-	blockIn := false
-	blockRead := false
-	blockText := ""
-	blockName := ""
-	outputIn := false
-	outputRead := false
-	outputText := ""
-	outputName := ""
-	var currentBlock block.Block
-	for _, line := range strings.Split(string(b), "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-		if strings.HasPrefix(line, "**") {
-			blockName = strings.TrimPrefix(strings.TrimSuffix(line, "**"), "**")
-			blockIn = true
-		} else if strings.HasPrefix(line, "*") {
-			outputName = strings.TrimPrefix(strings.TrimSuffix(line, "*"), "*")
-			outputIn = true
-		} else if strings.HasPrefix(line, "```") {
-			if blockIn {
-				if blockRead {
-					currentBlock, err = block.Parse(blockText)
-					if err != nil {
-						log.Error(err)
-						return
-					}
-					currentBlock.Name = blockName
-					sequences.Blocks = append(sequences.Blocks, currentBlock)
-					currentBlock = block.Block{}
-					blockIn = false
-					blockText = ""
+			// copy first block
+			out := sprocket.Sprocket{Name: v}
+			for i, name := range strings.Fields(outputText) {
+				var bl block.Block
+				bl, err = sequences.GetBlock(name)
+				if err != nil {
+					log.Error(err)
+					return
 				}
-				blockRead = !blockRead
-			} else if outputIn {
-				if outputRead {
-					log.Tracef("output: %s", outputName)
-					outputText = strings.Join(strings.Split(outputText, "\n"), " ")
-					outputText = multiply.Parse(outputText, multiply.Parentheses)
-					// remove all parentheses
-					outputText = strings.ReplaceAll(outputText, "(", "")
-					outputText = strings.ReplaceAll(outputText, ")", "")
-					fmt.Println(outputText)
-
-					// copy first block
-					out := sprocket.Sprocket{Name: outputName}
-					for i, name := range strings.Fields(outputText) {
-						var bl block.Block
-						bl, err = sequences.GetBlock(name)
-						if err != nil {
-							log.Error(err)
-							return
-						}
-						if i == 0 {
-							out.Block = bl
-						} else {
-							out.Block.Add(bl)
-						}
-					}
-
-					// compute emitter + player
-					emitters := []emitter.Emitter{}
-					for _, name := range strings.Fields(outputName) {
-						dotFields := strings.Split(name, ".")
-						if dotFields[0] == "midi" && len(dotFields) > 1 {
-							channel := 0
-							if len(dotFields) > 2 && strings.HasPrefix(dotFields[2], "ch") {
-								channel, _ = strconv.Atoi(strings.TrimPrefix(dotFields[2], "ch"))
-							}
-							midiEmitter, errMidi := emitter.NewMidi(dotFields[1], channel)
-							if errMidi != nil {
-								log.Error(errMidi)
-								continue
-							}
-							emitters = append(emitters, midiEmitter)
-						} else if dotFields[0] == "debug" {
-							emitters = append(emitters, emitter.Debugger{})
-						} else {
-							log.Error(fmt.Errorf("could not find emitter %s", name))
-						}
-					}
-					out.Player = player.New(emitters)
-
-					// add output to list
-					sequences.Sprockets = append(sequences.Sprockets, out)
-
-					outputIn = false
-					outputText = ""
+				if i == 0 {
+					out.Block = bl
+				} else {
+					out.Block.Add(bl)
 				}
-				outputRead = !outputRead
 			}
-		} else if blockRead {
-			blockText += line + "\n"
-		} else if outputRead {
-			outputText += line + "\n"
+
+			// compute emitter + player
+			emitters := []emitter.Emitter{}
+			for _, name := range strings.Fields(v) {
+				dotFields := strings.Split(name, "_")
+				if dotFields[0] == "midi" && len(dotFields) > 1 {
+					channel := 0
+					if len(dotFields) > 2 && strings.HasPrefix(dotFields[2], "ch") {
+						channel, _ = strconv.Atoi(strings.TrimPrefix(dotFields[2], "ch"))
+					}
+					midiEmitter, errMidi := emitter.NewMidi(dotFields[1], channel)
+					if errMidi != nil {
+						log.Error(errMidi)
+						continue
+					}
+					emitters = append(emitters, midiEmitter)
+				} else if dotFields[0] == "debug" {
+					emitters = append(emitters, emitter.Debugger{})
+				} else {
+					log.Error(fmt.Errorf("could not find emitter %s", name))
+				}
+			}
+			out.Player = player.New(emitters)
+
+			// add output to list
+			sequences.Sprockets = append(sequences.Sprockets, out)
+
 		}
 	}
 
