@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/schollz/asdf/src/emitter"
 	"github.com/schollz/asdf/src/fileparser"
 	"github.com/schollz/asdf/src/sprocket"
 	log "github.com/schollz/logger"
@@ -69,6 +70,7 @@ func Run(filename string) (err error) {
 
 	// wait for context to be done
 	<-ctx.Done()
+	emitter.CrowClose()
 	time.Sleep(1 * time.Second)
 	return
 }

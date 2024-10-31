@@ -7,6 +7,7 @@ import (
 
 	"github.com/loov/hrtime"
 	"github.com/schollz/asdf/src/block"
+	"github.com/schollz/asdf/src/emitter"
 	"github.com/schollz/asdf/src/player"
 	log "github.com/schollz/logger"
 )
@@ -60,6 +61,7 @@ func (s *Sprockets) Run(ctx context.Context) (err error) {
 				return
 			}
 			lastTime = currentTime
+			emitter.CrowFlush()
 		}
 	}
 }
@@ -96,6 +98,7 @@ func (s *Sprockets) update(totalLast, totalTime float64) (err error) {
 			}
 
 		}
+
 	}
 	s.mu.Unlock()
 	return

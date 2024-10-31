@@ -69,7 +69,7 @@ func NewMidi(name string, channel int) (m Midi, err error) {
 	return
 }
 
-func (m Midi) NoteOn(note int, velocity int) {
+func (m *Midi) NoteOn(note int, velocity int) {
 	if m.Conn == nil {
 		return
 	}
@@ -82,7 +82,7 @@ func (m Midi) NoteOn(note int, velocity int) {
 	}
 }
 
-func (m Midi) NoteOff(note int) {
+func (m *Midi) NoteOff(note int) {
 	if m.Conn == nil {
 		return
 	}
@@ -94,7 +94,7 @@ func (m Midi) NoteOff(note int) {
 	}
 }
 
-func (m Midi) Set(param string, value int) {
+func (m *Midi) Set(param string, value int) {
 	if m.Conn == nil {
 		return
 	}

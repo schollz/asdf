@@ -30,7 +30,7 @@ type Crow struct {
 	Release float64
 }
 
-func (c Crow) NoteOn(note int, velocity int) {
+func (c *Crow) NoteOn(note int, velocity int) {
 	if c.Pitch > 0 {
 		log.Debugf("[crow%d] output[%d] note_on %d %d", (c.Pitch-1)/4, (c.Pitch-1)%4+1, note, velocity)
 		crowCommand(c.Pitch,
@@ -42,7 +42,7 @@ func (c Crow) NoteOn(note int, velocity int) {
 	}
 }
 
-func (c Crow) NoteOff(note int) {
+func (c *Crow) NoteOff(note int) {
 	if c.Pitch > 0 {
 		log.Debugf("crow%d[%d]: note_ff %d", (c.Pitch-1)/4, c.Pitch, note)
 	}
@@ -51,18 +51,18 @@ func (c Crow) NoteOff(note int) {
 	}
 }
 
-func (c Crow) Set(param string, value int) {
+func (c *Crow) Set(param string, value int) {
 	if (param == "attack" || param == "decay" || param == "sustain" || param == "release") && c.Env > 0 {
 		log.Debugf("crow%d[%d]: set %s=%d", (c.Env-1)/4, c.Env, param, value)
 		switch param {
 		case "attack":
-			(&c).Attack = float64(value) / 1000.0
+			c.Attack = float64(value) / 1000.0
 		case "decay":
-			(&c).Decay = float64(value) / 1000.0
+			c.Decay = float64(value) / 1000.0
 		case "sustain":
-			(&c).Sustain = float64(value) / 100.0
+			c.Sustain = float64(value) / 100.0
 		case "release":
-			(&c).Release = float64(value) / 1000.0
+			c.Release = float64(value) / 1000.0
 		}
 		cmd := fmt.Sprintf(".action=adsr(%3.3f,%3.3f,%3.3f,%3.3f)", c.Attack, c.Decay, c.Sustain, c.Release)
 		crowCommand(c.Env, cmd)
@@ -70,18 +70,17 @@ func (c Crow) Set(param string, value int) {
 }
 
 func NewCrow(pitch int, envelope int) (c Crow, err error) {
-	setupCrows()
-	if !crowsSetup {
+	if !setupCrows() {
 		err = fmt.Errorf("no crows connected")
 	}
 
 	c = Crow{
 		Pitch:   (pitch-1)%4 + 1,
 		Env:     (envelope-1)%4 + 1,
-		Attack:  5,
+		Attack:  0.1,
 		Decay:   0.1,
 		Sustain: 10.0,
-		Release: 5,
+		Release: 1,
 	}
 	if pitch > 0 && (pitch-1)/4 >= len(murder) {
 		err = fmt.Errorf("crow%d not connected", (c.Pitch-1)/4)
@@ -97,9 +96,19 @@ func NewCrow(pitch int, envelope int) (c Crow, err error) {
 	return
 }
 
-func setupCrows() {
-	if crowsSetup {
+func CrowClose() (err error) {
+	if !crowsSetup {
 		return
+	}
+	for _, m := range murder {
+		err = m.Conn.Close()
+	}
+	return
+}
+
+func setupCrows() (yes bool) {
+	if crowsSetup {
+		return true
 	}
 	if time.Since(crowsChecked) < 10*time.Second {
 		return
@@ -170,7 +179,7 @@ func setupCrows() {
 	}
 	log.Debugf("found %d crows", len(murder))
 	crowsSetup = len(murder) > 0
-	return
+	return crowsSetup
 }
 
 func read(conn *serial.Port) (r []byte, err error) {
@@ -186,12 +195,12 @@ func read(conn *serial.Port) (r []byte, err error) {
 	if len(r) == 0 {
 		err = fmt.Errorf("unable to read")
 	}
-	log.Tracef("read %d bytes: %s", len(r), r)
+	log.Tracef("read %d bytes: %s", len(r), bytes.TrimSpace(r))
 	return
 }
 
 func CrowFlush() (err error) {
-	if !crowsSetup {
+	if !setupCrows() {
 		return
 	}
 	crowMutex.Lock()

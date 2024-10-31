@@ -88,20 +88,36 @@ func Parse(filename string) (sequences Sequences, err error) {
 			// compute emitter + player
 			emitters := []emitter.Emitter{}
 			for _, name := range strings.Fields(v) {
-				dotFields := strings.Split(name, "_")
-				if dotFields[0] == "midi" && len(dotFields) > 1 {
+				dashFields := strings.Split(name, "_")
+				if dashFields[0] == "midi" && len(dashFields) > 1 {
 					channel := 0
-					if len(dotFields) > 2 && strings.HasPrefix(dotFields[2], "ch") {
-						channel, _ = strconv.Atoi(strings.TrimPrefix(dotFields[2], "ch"))
+					if len(dashFields) > 2 && strings.HasPrefix(dashFields[2], "ch") {
+						channel, _ = strconv.Atoi(strings.TrimPrefix(dashFields[2], "ch"))
 					}
-					midiEmitter, errMidi := emitter.NewMidi(dotFields[1], channel)
+					midiEmitter, errMidi := emitter.NewMidi(dashFields[1], channel)
 					if errMidi != nil {
 						log.Error(errMidi)
 						continue
 					}
-					emitters = append(emitters, midiEmitter)
-				} else if dotFields[0] == "debug" {
-					emitters = append(emitters, emitter.Debugger{})
+					emitters = append(emitters, &midiEmitter)
+				} else if dashFields[0] == "crow" && len(dashFields) > 1 {
+					pitch := 0
+					env := 0
+					for _, field := range dashFields[1:] {
+						if strings.HasPrefix(field, "voct") {
+							pitch, _ = strconv.Atoi(strings.TrimPrefix(field, "voct"))
+						} else if strings.HasPrefix(field, "env") {
+							env, _ = strconv.Atoi(strings.TrimPrefix(field, "env"))
+						}
+					}
+					crowEmitter, errCrow := emitter.NewCrow(pitch, env)
+					if errCrow != nil {
+						log.Error(errCrow)
+						continue
+					}
+					emitters = append(emitters, &crowEmitter)
+				} else if dashFields[0] == "debug" {
+					emitters = append(emitters, &emitter.Debugger{})
 				} else {
 					log.Error(fmt.Errorf("could not find emitter %s", name))
 				}
