@@ -18,7 +18,7 @@ type Midi struct {
 
 func ListMidiOuts() (outs []string, err error) {
 	outPorts := midi.GetOutPorts()
-	if len(outs) == 0 {
+	if len(outPorts) == 0 {
 		err = fmt.Errorf("no MIDI output ports available")
 		return
 	}

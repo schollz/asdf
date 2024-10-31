@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"strings"
 
 	"github.com/schollz/asdf/src/emitter"
 	"github.com/schollz/asdf/src/runner"
@@ -30,8 +31,9 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		} else {
+			fmt.Println("midi outs available:")
 			for i, v := range outs {
-				fmt.Printf("%d) '%s'", i, v)
+				fmt.Printf("%d) '%s'\n", i+1, strings.Split(v, ":")[0])
 			}
 		}
 		return

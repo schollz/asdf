@@ -55,6 +55,9 @@ func (p *Param) Next() int {
 }
 
 func (p *Param) Current() int {
+	if p.Iterator < 0 {
+		return p.Values[0]
+	}
 	return p.Values[p.Iterator%len(p.Values)]
 }
 
