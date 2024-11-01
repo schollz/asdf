@@ -8,6 +8,7 @@ c6 e f4 c6 e f4
 c2 b1 g2 g1
 `
 
-part2 = ".bpm200 a2ce b c d"
-
-debug = "part2"
+part2 = `.gate50.bpm180
+C;3.arp.up4.down4.attack1.reverb0
+`
+supercollider_polyperc = "part2"

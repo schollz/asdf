@@ -21,6 +21,29 @@ const PARAM_RANDOM = "random"
 const PARAM_BEATS = "beats"
 const PARAM_BPM = "bpm"
 
+var names map[string][]string
+
+func init() {
+	// shorthand values
+	names = map[string][]string{
+		"probability": []string{"pr", "prob"},
+		"transpose":   []string{"trans", "tr"},
+		"velocity":    []string{"vel"},
+		"gate":        []string{"gat"},
+		"arpeggio":    []string{"arp"},
+		"up":          []string{"up"},
+		"down":        []string{"dow"},
+		"thumb":       []string{"thumb"},
+		"random":      []string{"rand"},
+		"beats":       []string{"beats"},
+		"bpm":         []string{"bpm"},
+		"attack":      []string{"atk"},
+		"decay":       []string{"dec"},
+		"sustain":     []string{"sus"},
+		"release":     []string{"rel"},
+	}
+}
+
 type Param struct {
 	TextOriginal string
 	Name         string
@@ -75,27 +98,14 @@ func (p Param) Copy() Param {
 	}
 }
 
+func IsSpecialParameter(name string) bool {
+	_, ok := names[name]
+	return ok
+}
+
 func Parse(s string) (p Param, err error) {
 	p.TextOriginal = s
 
-	// shorthand values
-	names := map[string][]string{
-		"probability": []string{"p", "prob"},
-		"transpose":   []string{"trans", "t", "tr"},
-		"velocity":    []string{"v", "vel"},
-		"gate":        []string{"g"},
-		"arpeggio":    []string{"arp"},
-		"up":          []string{"up"},
-		"down":        []string{"do"},
-		"thumb":       []string{"thumb"},
-		"random":      []string{"rand"},
-		"beats":       []string{"beats"},
-		"bpm":         []string{"bpm"},
-		"attack":      []string{"atk", "at"},
-		"decay":       []string{"dec", "de"},
-		"sustain":     []string{"sus", "su"},
-		"release":     []string{"rel", "re"},
-	}
 	// extract all whole numbers (positive or negative) using regex
 	re := regexp.MustCompile(`-?\d+`)
 	valueStrings := re.FindAllString(s, -1)
@@ -124,8 +134,13 @@ func Parse(s string) (p Param, err error) {
 		}
 	}
 	if bestK == "" {
-		err = fmt.Errorf("could not parse %s", s)
-		return
+		// capture everything before the first number
+		re = regexp.MustCompile(`\D+`)
+		bestK = re.FindString(s)
+		if bestK == "" {
+			err = fmt.Errorf("could not find parameter name in %s", s)
+			return
+		}
 	}
 	p = New(bestK, values)
 

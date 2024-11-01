@@ -114,12 +114,19 @@ func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) 
 					v := float64(s.GetParamNext(setting, 0))
 					// scale to the duration of the note
 					v = v * (s.TimeEnd - s.TimeStart) / 100.0
+					log.Tracef("setting %s to %0.2f", setting, v)
 					play.Set(setting, v)
 				}
 			}
 			if s.HasParam("sustain") {
 				v := float64(s.GetParamNext("sustain", 0))
 				play.Set("sustain", v/100.0)
+			}
+			for _, pram := range s.Params {
+				log.Tracef("pram: %+v", pram)
+				if !param.IsSpecialParameter(pram.Name) {
+					play.Set(pram.Name, float64(pram.Current()))
+				}
 			}
 
 			// skip if probability is not met
@@ -184,6 +191,7 @@ func Parse(s string, midiNears ...int) (step Step, err error) {
 	if len(fields) > 1 {
 		for _, field := range fields[1:] {
 			p, err := param.Parse(field)
+			log.Tracef("[%s] parsing field: %s: %+v", s, field, p)
 			if err != nil {
 				log.Error(err)
 				continue

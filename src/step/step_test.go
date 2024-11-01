@@ -64,7 +64,7 @@ func TestParse(t *testing.T) {
 				param.Param{Name: "gate", Values: []int{50, 30}},
 			},
 		}},
-		{"c3d3e3.probability50", Step{
+		{"c3d3e3.probability50.pan100", Step{
 			Notes: []note.Note{
 				note.Note{Midi: 48},
 				note.Note{Midi: 50},
@@ -72,6 +72,7 @@ func TestParse(t *testing.T) {
 			},
 			Params: []param.Param{
 				param.Param{Name: "probability", Values: []int{50}},
+				param.Param{Name: "pan", Values: []int{100}},
 			},
 		}},
 		{"-", Step{}},
