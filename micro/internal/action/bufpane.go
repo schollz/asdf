@@ -9,6 +9,7 @@ import (
 	"github.com/schollz/asdf/micro/internal/buffer"
 	"github.com/schollz/asdf/micro/internal/config"
 	"github.com/schollz/asdf/micro/internal/display"
+	"github.com/schollz/asdf/micro/internal/globals"
 	ulua "github.com/schollz/asdf/micro/internal/lua"
 	"github.com/schollz/asdf/micro/internal/screen"
 	"github.com/schollz/asdf/micro/internal/util"
@@ -473,8 +474,9 @@ func (h *BufPane) HandleEvent(event tcell.Event) {
 		log.Tracef("tcell.EventKey: %v %v %v", ke.mod, ke.code, ke.r)
 		if ke.mod == 2 && ke.code == 0 && ke.r == 0 {
 			// Ctrl+Space
-			log.Trace("ctrl + space")
-			// TODO: toggle start/stop
+			log.Trace("ctrl + space", h.Buf.GetName())
+			globals.ProcessFilename(h.Buf.GetName())
+			globals.Sprock.Toggle()
 		} else {
 			done := h.DoKeyEvent(ke)
 			if !done && e.Key() == tcell.KeyRune {

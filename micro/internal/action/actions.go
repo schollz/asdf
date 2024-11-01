@@ -1057,6 +1057,7 @@ func (h *BufPane) saveBufToFile(filename string, action string, callback func())
 	} else {
 		h.Buf.Path = filename
 		h.Buf.SetName(filename)
+		globals.ProcessFilename(filename)
 		InfoBar.Message("Saved " + filename)
 		if callback != nil {
 			callback()

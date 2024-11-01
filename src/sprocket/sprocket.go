@@ -27,6 +27,7 @@ type Sprockets struct {
 
 func New(sprockets []Sprocket) Sprockets {
 	return Sprockets{
+		Playing:   true,
 		Sprockets: sprockets,
 	}
 }
@@ -89,6 +90,7 @@ func (s *Sprockets) Toggle(play ...bool) {
 		}
 	}
 	s.Playing = nowPlaying
+	log.Tracef("sprocket is playing: %v", s.Playing)
 }
 
 func (s *Sprockets) update(totalLast, totalTime float64) (err error) {

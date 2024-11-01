@@ -43,7 +43,6 @@ func Parse(filename string) (sequences Sequences, err error) {
 		log.Error(err)
 	}
 	for i, v := range variables {
-		fmt.Println("\n\n", i, v, values[i])
 		// check if block or if output
 		lines := strings.Split(values[i], "\n")
 		// try to parse first element
@@ -61,13 +60,11 @@ func Parse(filename string) (sequences Sequences, err error) {
 			sequences.Blocks = append(sequences.Blocks, currentBlock)
 		} else {
 			// is output
-			fmt.Println("output")
 			outputText := strings.Join(strings.Split(values[i], "\n"), " ")
 			outputText = multiply.Parse(outputText, multiply.Parentheses)
 			// remove all parentheses
 			outputText = strings.ReplaceAll(outputText, "(", "")
 			outputText = strings.ReplaceAll(outputText, ")", "")
-			fmt.Println(outputText)
 
 			// copy first block
 			out := sprocket.Sprocket{Name: v}

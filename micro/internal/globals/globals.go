@@ -25,11 +25,13 @@ func DoCancel() {
 }
 
 func ProcessFilename(filename string) (err error) {
+	log.Tracef("processing %s", filename)
 	sequences, err := fileparser.Parse(filename)
 	if err != nil {
 		log.Error(err)
 		return
 	} else {
+		log.Tracef("parsed %s", filename)
 		Sprock.Update(sequences.Sprockets)
 		if !SprockRunning {
 			SprockRunning = true
@@ -37,6 +39,7 @@ func ProcessFilename(filename string) (err error) {
 
 			// Run the function in a separate goroutine
 			go func() {
+				log.Tracef("running sprocket")
 				if err := Sprock.Run(ctx); err != nil {
 					log.Error(err)
 				}

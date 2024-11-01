@@ -1,7 +1,6 @@
 package block
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/schollz/asdf/src/line"
@@ -122,11 +121,6 @@ func Parse(block string) (b Block, err error) {
 	for i := range steps {
 		steps[i].TimeStart = steps[i].BeatStart * 60.0 / steps[i].BPM
 		steps[i].TimeEnd = steps[i].BeatEnd * 60.0 / steps[i].BPM
-	}
-
-	log.Trace("consolidated steps:")
-	for _, s := range steps {
-		fmt.Printf("step: %+v\n", s.Info())
 	}
 
 	b.Steps = steps

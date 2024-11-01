@@ -8,4 +8,6 @@ c6 e f4 c6 e f4
 c2 b1 g2 g1
 `
 
-crow_voct1_env2 = "part1"
+part2 = "a2 b c d"
+
+debug = "part2"
