@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
 	cmd "github.com/schollz/asdf/micro/cmd/micro"
@@ -21,6 +22,14 @@ func init() {
 
 func main() {
 	flag.Parse()
+
+	log.SetLevel("trace")
+	f, err := os.Create("asdf.log")
+	if err != nil {
+		panic(err)
+	}
+	log.SetOutput(f)
+
 	if flagMidiOuts {
 		outs, err := emitter.ListMidiOuts()
 		if err != nil {
