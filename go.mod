@@ -31,18 +31,19 @@ require (
 
 require (
 	github.com/creack/goselect v0.1.2 // indirect
-	github.com/creack/pty v1.1.18 // indirect
+	github.com/creack/pty v1.1.24 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dlclark/regexp2 v1.11.4 // indirect
-	github.com/gdamore/encoding v1.0.0 // indirect
+	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
-	github.com/google/pprof v0.0.0-20241029153458-d1b30febd7db // indirect
-	github.com/lucasb-eyer/go-colorful v1.0.3 // indirect
+	github.com/google/pprof v0.0.0-20241101162523-b92577c0c142 // indirect
+	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/npat-efault/poller v2.0.0+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
-	github.com/xo/terminfo v0.0.0-20200218205459-454e5b68f9e8 // indirect
-	github.com/zyedidia/poller v1.0.1 // indirect
+	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+	github.com/zyedidia/poller v2.0.0+incompatible // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
 )
