@@ -10,12 +10,13 @@ import (
 	luar "layeh.com/gopher-luar"
 
 	runewidth "github.com/mattn/go-runewidth"
-	lua "github.com/yuin/gopher-lua"
 	"github.com/schollz/asdf/micro/internal/buffer"
 	"github.com/schollz/asdf/micro/internal/config"
+	"github.com/schollz/asdf/micro/internal/globals"
 	ulua "github.com/schollz/asdf/micro/internal/lua"
 	"github.com/schollz/asdf/micro/internal/screen"
 	"github.com/schollz/asdf/micro/internal/util"
+	lua "github.com/yuin/gopher-lua"
 )
 
 // StatusLine represents the information line at the bottom
@@ -164,8 +165,18 @@ func (s *StatusLine) Display() {
 	}
 
 	leftText := []byte(s.win.Buf.Settings["statusformatl"].(string))
+	// leftText = formatParser.ReplaceAllFunc(leftText, formatter)
+	left := ""
+	if globals.Sprock.Playing {
+		left = "▶"
+	} else {
+		left = "⏸"
+	}
+	leftText = []byte(left + " $(filename) ($(line),$(col))")
 	leftText = formatParser.ReplaceAllFunc(leftText, formatter)
+
 	rightText := []byte(s.win.Buf.Settings["statusformatr"].(string))
+	rightText = []byte(strings.Join(globals.Sprock.NotesOn(), " "))
 	rightText = formatParser.ReplaceAllFunc(rightText, formatter)
 
 	statusLineStyle := config.DefStyle.Reverse(true)

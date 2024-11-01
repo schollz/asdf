@@ -42,6 +42,13 @@ func (s *Sprockets) Update(sprockets []Sprocket) {
 	s.mu.Unlock()
 }
 
+func (s *Sprockets) NotesOn() (notesOn []string) {
+	for _, sp := range s.Sprockets {
+		notesOn = append(notesOn, sp.Player.NotesOn()...)
+	}
+	return
+}
+
 func (s *Sprockets) Run(ctx context.Context) (err error) {
 	ticker := time.NewTicker(10 * time.Millisecond)
 	defer ticker.Stop() // Ensure ticker is stopped when function exits

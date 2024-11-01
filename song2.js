@@ -8,6 +8,6 @@ c6 e f4 c6 e f4
 c2 b1 g2 g1
 `
 
-part2 = "a2 b c d"
+part2 = ".bpm200 a2ce b c d"
 
 debug = "part2"
