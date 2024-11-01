@@ -38,5 +38,9 @@ func main() {
 		}
 		return
 	}
-	runner.Run(flagFilename)
+	if flagFilename != "" {
+		runner.Run(flagFilename)
+		return
+	}
+
 }
