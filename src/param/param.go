@@ -85,12 +85,16 @@ func Parse(s string) (p Param, err error) {
 		"velocity":    []string{"v", "vel"},
 		"gate":        []string{"g"},
 		"arpeggio":    []string{"arp"},
-		"up":          []string{"u"},
-		"down":        []string{"d"},
+		"up":          []string{"up"},
+		"down":        []string{"do"},
 		"thumb":       []string{"thumb"},
-		"random":      []string{"r"},
+		"random":      []string{"rand"},
 		"beats":       []string{"beats"},
 		"bpm":         []string{"bpm"},
+		"attack":      []string{"atk", "at"},
+		"decay":       []string{"dec", "de"},
+		"sustain":     []string{"sus", "su"},
+		"release":     []string{"rel", "re"},
 	}
 	// extract all whole numbers (positive or negative) using regex
 	re := regexp.MustCompile(`-?\d+`)

@@ -51,18 +51,30 @@ func (c *Crow) NoteOff(note int) {
 	}
 }
 
-func (c *Crow) Set(param string, value int) {
+func (c *Crow) Set(param string, value float64) {
 	if (param == "attack" || param == "decay" || param == "sustain" || param == "release") && c.Env > 0 {
 		log.Debugf("crow%d[%d]: set %s=%d", (c.Env-1)/4, c.Env, param, value)
 		switch param {
 		case "attack":
-			c.Attack = float64(value) / 1000.0
+			c.Attack = float64(value)
+			if c.Attack > 10 {
+				c.Attack = 10
+			}
 		case "decay":
-			c.Decay = float64(value) / 1000.0
+			c.Decay = float64(value)
+			if c.Decay > 10 {
+				c.Decay = 10
+			}
 		case "sustain":
-			c.Sustain = float64(value) / 100.0
+			c.Sustain = float64(value) * 10.0
+			if c.Sustain > 10 {
+				c.Sustain = 10
+			}
 		case "release":
-			c.Release = float64(value) / 1000.0
+			c.Release = float64(value)
+			if c.Release > 10 {
+				c.Release = 10
+			}
 		}
 		cmd := fmt.Sprintf(".action=adsr(%3.3f,%3.3f,%3.3f,%3.3f)", c.Attack, c.Decay, c.Sustain, c.Release)
 		crowCommand(c.Env, cmd)

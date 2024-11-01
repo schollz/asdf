@@ -7,7 +7,7 @@ import (
 type Emitter interface {
 	NoteOn(note int, velocity int)
 	NoteOff(note int)
-	Set(param string, value int)
+	Set(param string, value float64)
 }
 
 type Debugger struct{}
@@ -20,6 +20,6 @@ func (d *Debugger) NoteOff(note int) {
 	log.Debugf("NoteOff: %d", note)
 }
 
-func (d *Debugger) Set(param string, value int) {
-	log.Debugf("Set: %s %d", param, value)
+func (d *Debugger) Set(param string, value float64) {
+	log.Debugf("Set: %s %2.3f", param, value)
 }

@@ -104,9 +104,23 @@ func (s Step) String() string {
 	return v.String()
 }
 
-func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) {
+func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) (notesOn []int, notesOff []int) {
 	if timeLast <= s.TimeStart && timeCurrent >= s.TimeStart {
 		for _, nn := range s.Notes {
+			// adsr settings
+			settings := []string{"attack", "decay", "release"}
+			for _, setting := range settings {
+				if s.HasParam(setting) {
+					v := float64(s.GetParamNext(setting, 0))
+					// scale to the duration of the note
+					v = v * (s.TimeEnd - s.TimeStart) / 100.0
+					play.Set(setting, v)
+				}
+			}
+			if s.HasParam("sustain") {
+				v := float64(s.GetParamNext("sustain", 0))
+				play.Set("sustain", v/100.0)
+			}
 
 			// skip if probability is not met
 			probability := s.GetParamNext("probability", 100)
@@ -121,6 +135,7 @@ func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) 
 			velocity := s.GetParamNext("velocity", 64)
 
 			play.NoteOn(noteMidi, velocity)
+			notesOn = append(notesOn, noteMidi)
 		}
 	}
 	// check if note has a gate parameter
@@ -133,8 +148,11 @@ func (s *Step) Play(timeLast float64, timeCurrent float64, play *player.Player) 
 		transpose := s.GetParamCurrent("transpose", 0)
 		for _, nn := range s.Notes {
 			play.NoteOff(nn.Midi + transpose)
+			notesOff = append(notesOff, nn.Midi+transpose)
 		}
 	}
+
+	return
 }
 
 func Parse(s string, midiNears ...int) (step Step, err error) {

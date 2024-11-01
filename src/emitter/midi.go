@@ -94,7 +94,7 @@ func (m *Midi) NoteOff(note int) {
 	}
 }
 
-func (m *Midi) Set(param string, value int) {
+func (m *Midi) Set(param string, value float64) {
 	if m.Conn == nil {
 		return
 	}

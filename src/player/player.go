@@ -40,6 +40,12 @@ func (p *Player) NoteOff(note int) {
 	p.mu.Unlock()
 }
 
+func (p *Player) Set(param string, value float64) {
+	for _, e := range p.Emitters {
+		e.Set(param, value)
+	}
+}
+
 func (p *Player) Reset() {
 	for note := range p.notesOn {
 		p.NoteOff(note)

@@ -14,8 +14,8 @@ func TestCrow(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	c.Set("attack", 1000)
-	c.Set("release", 1000)
+	c.Set("attack", 1.0)
+	c.Set("release", 1.0)
 	c.NoteOn(60, 100)
 	err = CrowFlush()
 	if err != nil {

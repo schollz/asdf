@@ -8,6 +8,7 @@ import (
 	"github.com/loov/hrtime"
 	"github.com/schollz/asdf/src/block"
 	"github.com/schollz/asdf/src/emitter"
+	"github.com/schollz/asdf/src/note"
 	"github.com/schollz/asdf/src/player"
 	log "github.com/schollz/logger"
 )
@@ -19,10 +20,11 @@ type Sprocket struct {
 }
 
 type Sprockets struct {
-	Sprockets []Sprocket
-	Playing   bool
-	StartTime time.Duration
-	mu        sync.Mutex
+	Sprockets   []Sprocket
+	Playing     bool
+	StartTime   time.Duration
+	mu          sync.Mutex
+	noteMarquee []string
 }
 
 func New(sprockets []Sprocket) Sprockets {
@@ -42,11 +44,18 @@ func (s *Sprockets) Update(sprockets []Sprocket) {
 	s.mu.Unlock()
 }
 
-func (s *Sprockets) NotesOn() (notesOn []string) {
-	for _, sp := range s.Sprockets {
-		notesOn = append(notesOn, sp.Player.NotesOn()...)
+func (s *Sprockets) NotesOn() []string {
+	return s.noteMarquee
+}
+
+func (s *Sprockets) AddToMarquee(midis []int) {
+	for _, midi := range midis {
+		n, _ := note.FromMidi(midi)
+		s.noteMarquee = append(s.noteMarquee, n.Name)
+		if len(s.noteMarquee) > 10 {
+			s.noteMarquee = s.noteMarquee[1:]
+		}
 	}
-	return
 }
 
 func (s *Sprockets) Run(ctx context.Context) (err error) {
@@ -68,7 +77,7 @@ func (s *Sprockets) Run(ctx context.Context) (err error) {
 				continue
 			}
 			currentTime := hrtime.Since(s.StartTime).Seconds()
-			err = s.update(lastTime, currentTime)
+			s.update(lastTime, currentTime)
 			if err != nil {
 				log.Error(err)
 				return
@@ -121,14 +130,17 @@ func (s *Sprockets) update(totalLast, totalTime float64) (err error) {
 		}
 		if currentTimeLast > currentTime {
 			for _, step := range sp.Block.Steps {
-				step.Play(currentTimeLast, currentTime+sp.Block.TotalTime, &sp.Player)
+				notesOn, _ := step.Play(currentTimeLast, currentTime+sp.Block.TotalTime, &sp.Player)
+				s.AddToMarquee(notesOn)
 			}
 			for _, step := range sp.Block.Steps {
-				step.Play(currentTimeLast-sp.Block.TotalTime, currentTime, &sp.Player)
+				notesOn, _ := step.Play(currentTimeLast-sp.Block.TotalTime, currentTime, &sp.Player)
+				s.AddToMarquee(notesOn)
 			}
 		} else {
 			for _, step := range sp.Block.Steps {
-				step.Play(currentTimeLast, currentTime, &sp.Player)
+				notesOn, _ := step.Play(currentTimeLast, currentTime, &sp.Player)
+				s.AddToMarquee(notesOn)
 			}
 
 		}
