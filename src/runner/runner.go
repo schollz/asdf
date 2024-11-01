@@ -29,7 +29,6 @@ func Run(filename string) (err error) {
 		return
 	}
 	filenameHash := hash256(filename)
-
 	sprock := sprocket.New(sequences.Sprockets)
 
 	ctx, cancel := context.WithCancel(context.Background())
