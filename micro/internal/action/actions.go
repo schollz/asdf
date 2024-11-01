@@ -1030,8 +1030,12 @@ func (h *BufPane) saveBufToFile(filename string, action string, callback func())
 				} else {
 					h.Buf.Path = filename
 					h.Buf.SetName(filename)
-					InfoBar.Message("Saved " + filename)
-					globals.ProcessFilename(filename)
+					errMessage := globals.ProcessFilename(filename)
+					if errMessage != nil {
+						InfoBar.Error(errMessage.Error())
+					} else {
+						InfoBar.Message("Saved " + filename)
+					}
 					if callback != nil {
 						callback()
 					}
@@ -1057,8 +1061,12 @@ func (h *BufPane) saveBufToFile(filename string, action string, callback func())
 	} else {
 		h.Buf.Path = filename
 		h.Buf.SetName(filename)
-		globals.ProcessFilename(filename)
-		InfoBar.Message("Saved " + filename)
+		errMessage := globals.ProcessFilename(filename)
+		if errMessage != nil {
+			InfoBar.Error(errMessage.Error())
+		} else {
+			InfoBar.Message("Saved " + filename)
+		}
 		if callback != nil {
 			callback()
 		}
