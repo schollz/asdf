@@ -9,6 +9,7 @@ import (
 	cmd "github.com/schollz/asdf/micro/cmd/micro"
 	"github.com/schollz/asdf/src/emitter"
 	"github.com/schollz/asdf/src/runner"
+	log "github.com/schollz/logger"
 )
 
 var flagFilename string

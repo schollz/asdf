@@ -20,6 +20,8 @@ type Sprocket struct {
 
 type Sprockets struct {
 	Sprockets []Sprocket
+	Playing   bool
+	StartTime time.Duration
 	mu        sync.Mutex
 }
 
@@ -42,7 +44,7 @@ func (s *Sprockets) Update(sprockets []Sprocket) {
 func (s *Sprockets) Run(ctx context.Context) (err error) {
 	ticker := time.NewTicker(10 * time.Millisecond)
 	defer ticker.Stop() // Ensure ticker is stopped when function exits
-	startTime := hrtime.Now()
+	s.StartTime = hrtime.Now()
 	lastTime := -1.0
 	for {
 		select {
@@ -54,7 +56,10 @@ func (s *Sprockets) Run(ctx context.Context) (err error) {
 			log.Debugf("sprocket received done signal")
 			return nil
 		case <-ticker.C:
-			currentTime := hrtime.Since(startTime).Seconds()
+			if !s.Playing {
+				continue
+			}
+			currentTime := hrtime.Since(s.StartTime).Seconds()
 			err = s.update(lastTime, currentTime)
 			if err != nil {
 				log.Error(err)
@@ -64,6 +69,26 @@ func (s *Sprockets) Run(ctx context.Context) (err error) {
 			emitter.CrowFlush()
 		}
 	}
+}
+
+func (s *Sprockets) Toggle(play ...bool) {
+	wasPlaying := s.Playing
+	var nowPlaying bool
+	if len(play) > 0 {
+		nowPlaying = play[0]
+	} else {
+		nowPlaying = !s.Playing
+	}
+	if !wasPlaying && nowPlaying {
+		// reset start time
+		s.StartTime = hrtime.Now()
+	} else if wasPlaying && !nowPlaying {
+		// reset players
+		for _, sp := range s.Sprockets {
+			sp.Player.Reset()
+		}
+	}
+	s.Playing = nowPlaying
 }
 
 func (s *Sprockets) update(totalLast, totalTime float64) (err error) {
