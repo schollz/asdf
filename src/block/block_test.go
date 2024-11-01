@@ -11,7 +11,7 @@ func TestExpand(t *testing.T) {
 	log.SetLevel("trace")
 	block := `.bpm120
 c4 d4
-- Em.arp.u4.gate50
+- Em.arp.up4.gate50
 f g (a b c)*2`
 	block_expected := `.bpm120
 c4 d4
@@ -27,12 +27,12 @@ f - - - - - g - - - - - a b c a b c
 	}
 }
 
-func TestParse(t *testing.T) {
+func TestParse1(t *testing.T) {
 	log.SetLevel("trace")
 	blockString := `.bpm120
 c4 ~ b3 c4
 - (Em f)*2
-Em7.arp.u4.gate50 ~
+Em7.arp.up4.gate50 ~
 `
 	block, err := Parse(blockString)
 	if err != nil {

@@ -53,7 +53,7 @@ func (c *Crow) NoteOff(note int) {
 
 func (c *Crow) Set(param string, value float64) {
 	if (param == "attack" || param == "decay" || param == "sustain" || param == "release") && c.Env > 0 {
-		log.Debugf("crow%d[%d]: set %s=%d", (c.Env-1)/4, c.Env, param, value)
+		log.Debugf("crow%d[%d]: set %s=%3.3f", (c.Env-1)/4, c.Env, param, value)
 		switch param {
 		case "attack":
 			c.Attack = float64(value)
