@@ -6,13 +6,14 @@ import (
 
 	luar "layeh.com/gopher-luar"
 
-	lua "github.com/yuin/gopher-lua"
 	"github.com/schollz/asdf/micro/internal/buffer"
 	"github.com/schollz/asdf/micro/internal/config"
 	"github.com/schollz/asdf/micro/internal/display"
 	ulua "github.com/schollz/asdf/micro/internal/lua"
 	"github.com/schollz/asdf/micro/internal/screen"
 	"github.com/schollz/asdf/micro/internal/util"
+	log "github.com/schollz/logger"
+	lua "github.com/yuin/gopher-lua"
 	"github.com/zyedidia/tcell/v2"
 )
 
@@ -469,10 +470,16 @@ func (h *BufPane) HandleEvent(event tcell.Event) {
 		h.Relocate()
 	case *tcell.EventKey:
 		ke := keyEvent(e)
-
-		done := h.DoKeyEvent(ke)
-		if !done && e.Key() == tcell.KeyRune {
-			h.DoRuneInsert(e.Rune())
+		log.Tracef("tcell.EventKey: %v %v %v", ke.mod, ke.code, ke.r)
+		if ke.mod == 2 && ke.code == 0 && ke.r == 0 {
+			// Ctrl+Space
+			log.Trace("ctrl + space")
+			// TODO: toggle start/stop
+		} else {
+			done := h.DoKeyEvent(ke)
+			if !done && e.Key() == tcell.KeyRune {
+				h.DoRuneInsert(e.Rune())
+			}
 		}
 	case *tcell.EventMouse:
 		if e.Buttons() != tcell.ButtonNone {
