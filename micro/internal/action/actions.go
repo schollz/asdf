@@ -15,6 +15,7 @@ import (
 	"github.com/schollz/asdf/micro/internal/clipboard"
 	"github.com/schollz/asdf/micro/internal/config"
 	"github.com/schollz/asdf/micro/internal/display"
+	"github.com/schollz/asdf/micro/internal/globals"
 	"github.com/schollz/asdf/micro/internal/screen"
 	"github.com/schollz/asdf/micro/internal/shell"
 	"github.com/schollz/asdf/micro/internal/util"
@@ -1030,6 +1031,7 @@ func (h *BufPane) saveBufToFile(filename string, action string, callback func())
 					h.Buf.Path = filename
 					h.Buf.SetName(filename)
 					InfoBar.Message("Saved " + filename)
+					globals.ProcessFilename(filename)
 					if callback != nil {
 						callback()
 					}
