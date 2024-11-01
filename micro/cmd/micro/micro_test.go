@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -7,11 +7,11 @@ import (
 	"testing"
 
 	"github.com/go-errors/errors"
-	"github.com/stretchr/testify/assert"
 	"github.com/schollz/asdf/micro/internal/action"
 	"github.com/schollz/asdf/micro/internal/buffer"
 	"github.com/schollz/asdf/micro/internal/config"
 	"github.com/schollz/asdf/micro/internal/screen"
+	"github.com/stretchr/testify/assert"
 	"github.com/zyedidia/tcell/v2"
 )
 

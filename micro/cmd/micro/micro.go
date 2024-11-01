@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"flag"
@@ -18,7 +18,6 @@ import (
 
 	"github.com/go-errors/errors"
 	isatty "github.com/mattn/go-isatty"
-	lua "github.com/yuin/gopher-lua"
 	"github.com/schollz/asdf/micro/internal/action"
 	"github.com/schollz/asdf/micro/internal/buffer"
 	"github.com/schollz/asdf/micro/internal/clipboard"
@@ -26,6 +25,7 @@ import (
 	"github.com/schollz/asdf/micro/internal/screen"
 	"github.com/schollz/asdf/micro/internal/shell"
 	"github.com/schollz/asdf/micro/internal/util"
+	lua "github.com/yuin/gopher-lua"
 	"github.com/zyedidia/tcell/v2"
 )
 
@@ -223,7 +223,7 @@ func LoadInput(args []string) []*buffer.Buffer {
 	return buffers
 }
 
-func main() {
+func Run() {
 	defer func() {
 		if util.Stdout.Len() > 0 {
 			fmt.Fprint(os.Stdout, util.Stdout.String())

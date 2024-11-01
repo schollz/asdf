@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	cmd "github.com/schollz/asdf/micro/cmd/micro"
 	"github.com/schollz/asdf/src/emitter"
 	"github.com/schollz/asdf/src/runner"
 )
@@ -12,20 +13,14 @@ import (
 var flagFilename string
 var flagVersion bool
 var flagMidiOuts bool
-var Version string
 
 func init() {
-	flag.BoolVar(&flagVersion, "version", false, "print version")
 	flag.BoolVar(&flagMidiOuts, "midi", false, "lists available midi outputs")
 	flag.StringVar(&flagFilename, "filename", "", "filename to run")
 }
 
 func main() {
 	flag.Parse()
-	if flagVersion {
-		fmt.Println("asdf version", Version)
-		return
-	}
 	if flagMidiOuts {
 		outs, err := emitter.ListMidiOuts()
 		if err != nil {
@@ -41,6 +36,8 @@ func main() {
 	if flagFilename != "" {
 		runner.Run(flagFilename)
 		return
+	} else {
+		cmd.Run()
 	}
 
 }
