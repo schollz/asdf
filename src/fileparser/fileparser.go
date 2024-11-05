@@ -33,6 +33,7 @@ func (s Sequences) GetBlock(name string) (b block.Block, err error) {
 }
 
 func Parse(filename string) (sequences Sequences, err error) {
+	instancesOfSuperCollider := 0
 	b, err := os.ReadFile(filename)
 	if err != nil {
 		log.Error(err)
@@ -99,7 +100,8 @@ func Parse(filename string) (sequences Sequences, err error) {
 					emitters = append(emitters, &midiEmitter)
 				} else if dashFields[0] == "supercollider" && len(dashFields) > 1 {
 					log.Tracef("supercollider: %s", dashFields[1])
-					scEmitter := emitter.NewSuperCollider(dashFields[1])
+					scEmitter := emitter.NewSuperCollider(dashFields[1], instancesOfSuperCollider)
+					instancesOfSuperCollider++
 					emitters = append(emitters, &scEmitter)
 				} else if dashFields[0] == "crow" && len(dashFields) > 1 {
 					pitch := 0

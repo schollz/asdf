@@ -5,18 +5,15 @@ import (
 	log "github.com/schollz/logger"
 )
 
-var instances int
-
 type SuperCollider struct {
 	ID       int
 	SynthDef string
 	Client   *osc.Client
 }
 
-func NewSuperCollider(synthDef string) SuperCollider {
-	instances++
+func NewSuperCollider(synthDef string, instance int) SuperCollider {
 	return SuperCollider{
-		ID:       instances,
+		ID:       instance,
 		SynthDef: synthDef,
 		Client:   osc.NewClient("127.0.0.1", 7771),
 	}
