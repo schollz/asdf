@@ -20,7 +20,7 @@ func NewSuperCollider(synthDef string, instance int) SuperCollider {
 }
 
 func (s *SuperCollider) NoteOn(note int, velocity int) {
-	log.Tracef("[supercollider](%s) note_on %d %d", s.SynthDef, note, velocity)
+	log.Tracef("[supercollider%d](%s) note_on %d %d", s.ID, s.SynthDef, note, velocity)
 	msg := osc.NewMessage("/asdf")
 	msg.Append("note_on")
 	msg.Append(int32(s.ID))

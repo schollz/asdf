@@ -8,11 +8,20 @@ c6 e f4 c6 e f4
 c2 b1 g2 g1
 `
 
-part2 = `.gate50.bpm120.reverb0
+part2 = `.gate50.bpm120.velocity30.reverb0
 C;3.arp.up8.down6.up2.down4
 Em;3.arp.up8.down6.up2.down4
 Am/E;3.arp.up8.down6.up2.down4
 F;3.arp.up8.down6.up2.down4
 `
-supercollider_polyperc = "part2"
+
+part3 = `c5.velocity120.gate50
+d e
+c5
+g f
+`
+
+supercollider_polyperc_1 = "part2"
+
+supercollider_polyperc_2 = "part3"
 

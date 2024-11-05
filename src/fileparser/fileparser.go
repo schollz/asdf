@@ -99,7 +99,7 @@ func Parse(filename string) (sequences Sequences, err error) {
 					}
 					emitters = append(emitters, &midiEmitter)
 				} else if dashFields[0] == "supercollider" && len(dashFields) > 1 {
-					log.Tracef("supercollider: %s", dashFields[1])
+					log.Tracef("supercollider instance %d: %s", instancesOfSuperCollider, dashFields[1])
 					scEmitter := emitter.NewSuperCollider(dashFields[1], instancesOfSuperCollider)
 					instancesOfSuperCollider++
 					emitters = append(emitters, &scEmitter)
